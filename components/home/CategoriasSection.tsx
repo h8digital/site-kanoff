@@ -22,8 +22,8 @@ async function getCategorias() {
     .eq('publicado_site', true)
   const cats = new Map<number, string>()
   ;(data ?? []).forEach((p: any) => {
-    const c = p.categorias
-    if (c?.id && c?.nome) cats.set(c.id, c.nome)
+    const arr = Array.isArray(p.categorias) ? p.categorias : [p.categorias]
+    arr.forEach((c: any) => { if (c?.id && c?.nome) cats.set(c.id, c.nome) })
   })
   return Array.from(cats.values())
 }
@@ -32,37 +32,51 @@ export default async function CategoriasSection() {
   const cats = await getCategorias()
 
   return (
-    <><style>{`
-      .cat-card-inner { transition: all 0.3s ease; cursor: pointer; }
-      .cat-card-inner:hover { border-color: rgba(255,184,0,0.4) !important; transform: translateY(-4px); box-shadow: 0 12px 40px rgba(0,0,0,0.5); }
-    `}</style>
-    <section className="section" style={{ background:'linear-gradient(180deg,var(--bg) 0%,#12103A 100%)' }}>
+    <section
+      className="section"
+      style={{ background:'linear-gradient(180deg,var(--bg) 0%,#12103A 100%)' }}
+    >
+      <style>{`
+        .cat-card-inner {
+          transition: all 0.3s ease;
+          cursor: pointer;
+        }
+        .cat-card-inner:hover {
+          border-color: rgba(255,184,0,0.4) !important;
+          transform: translateY(-4px);
+          box-shadow: 0 12px 40px rgba(0,0,0,0.5);
+        }
+      `}</style>
+
       <div className="container">
         <div style={{ textAlign:'center', marginBottom:48 }}>
           <p className="section-label">Catálogo</p>
-          <h2 className="section-title">CATEGORIAS DE <span className="neon-text">LOCAÇÃO</span></h2>
+          <h2 className="section-title">
+            CATEGORIAS DE <span className="neon-text">LOCAÇÃO</span>
+          </h2>
           <div className="divider-neon" style={{ margin:'16px auto 0' }} />
         </div>
 
         <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fill,minmax(200px,1fr))', gap:16 }}>
           {cats.map(cat => (
-            <Link key={cat} href={`/equipamentos?categoria=${encodeURIComponent(cat)}`}
-              style={{ textDecoration:'none' }}>
-              <div style={{
-                position: 'relative',
-                padding: '28px 20px',
-                background: 'var(--bg-card)',
-                border: '1px solid rgba(255,255,255,0.08)',
-                borderRadius: 'var(--r-lg)',
-                textAlign: 'center',
-                transition: 'all 0.3s ease',
-                cursor: 'pointer',
-                overflow: 'hidden',
-              }}
-className="cat-card-inner">
-                {/* Glow decoration */}
+            <Link
+              key={cat}
+              href={`/equipamentos?categoria=${encodeURIComponent(cat)}`}
+              style={{ textDecoration:'none' }}
+            >
+              <div
+                className="cat-card-inner"
+                style={{
+                  position:     'relative',
+                  padding:      '28px 20px',
+                  background:   'var(--bg-card)',
+                  border:       '1px solid rgba(255,255,255,0.08)',
+                  borderRadius: 'var(--r-lg)',
+                  textAlign:    'center',
+                  overflow:     'hidden',
+                }}
+              >
                 <div style={{ position:'absolute', top:-30, right:-30, width:80, height:80, borderRadius:'50%', background:'radial-gradient(circle,rgba(255,184,0,0.08) 0%,transparent 70%)', pointerEvents:'none' }} />
-
                 <div style={{ fontSize:40, marginBottom:12 }}>{ICONES[cat] ?? '🔧'}</div>
                 <div style={{ fontFamily:'var(--font-title)', fontSize:11, fontWeight:700, textTransform:'uppercase', letterSpacing:'0.08em', color:'rgba(255,255,255,0.85)', lineHeight:1.4 }}>
                   {cat}
@@ -76,5 +90,5 @@ className="cat-card-inner">
         </div>
       </div>
     </section>
-  )</>
+  )
 }
