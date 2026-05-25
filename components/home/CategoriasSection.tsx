@@ -32,6 +32,10 @@ export default async function CategoriasSection() {
   const cats = await getCategorias()
 
   return (
+    <><style>{`
+      .cat-card-inner { transition: all 0.3s ease; cursor: pointer; }
+      .cat-card-inner:hover { border-color: rgba(255,184,0,0.4) !important; transform: translateY(-4px); box-shadow: 0 12px 40px rgba(0,0,0,0.5); }
+    `}</style>
     <section className="section" style={{ background:'linear-gradient(180deg,var(--bg) 0%,#12103A 100%)' }}>
       <div className="container">
         <div style={{ textAlign:'center', marginBottom:48 }}>
@@ -55,18 +59,7 @@ export default async function CategoriasSection() {
                 cursor: 'pointer',
                 overflow: 'hidden',
               }}
-              onMouseEnter={e => {
-                const el = e.currentTarget as HTMLElement
-                el.style.borderColor = 'rgba(255,184,0,0.4)'
-                el.style.transform = 'translateY(-4px)'
-                el.style.boxShadow = '0 12px 40px rgba(0,0,0,0.5)'
-              }}
-              onMouseLeave={e => {
-                const el = e.currentTarget as HTMLElement
-                el.style.borderColor = 'rgba(255,255,255,0.08)'
-                el.style.transform = 'translateY(0)'
-                el.style.boxShadow = 'none'
-              }}>
+className="cat-card-inner">
                 {/* Glow decoration */}
                 <div style={{ position:'absolute', top:-30, right:-30, width:80, height:80, borderRadius:'50%', background:'radial-gradient(circle,rgba(255,184,0,0.08) 0%,transparent 70%)', pointerEvents:'none' }} />
 
@@ -83,5 +76,5 @@ export default async function CategoriasSection() {
         </div>
       </div>
     </section>
-  )
+  )</>
 }
