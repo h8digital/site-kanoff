@@ -10,13 +10,20 @@ type Produto = {
   id:number; nome:string; slug:string; titulo_site:string|null
   preco_locacao_diario:number; preco_fds:number; preco_locacao_semanal:number
   preco_quinzenal:number; preco_locacao_mensal:number
-  categorias:{nome:string}[]|{nome:string}|null
+  categorias:any
   produto_fotos:{url:string;principal:boolean}[]
 }
 
 const CAMPO: Record<string, string> = {
   'Diário':'preco_locacao_diario','Final de Semana':'preco_fds',
   'Semanal':'preco_locacao_semanal','Quinzenal':'preco_quinzenal','Mensal':'preco_locacao_mensal',
+}
+
+
+function catNome(categorias: any): string {
+  if (!categorias) return ''
+  if (Array.isArray(categorias)) return categorias[0]?.nome ?? ''
+  return categorias?.nome ?? ''
 }
 
 export default function CatalogoClient({ categorias }: { categorias:{id:number;nome:string}[] }) {
@@ -44,7 +51,7 @@ export default function CatalogoClient({ categorias }: { categorias:{id:number;n
   useEffect(() => { load() }, [load])
 
   const filtrados = produtos.filter(p => {
-    const okCat   = !catFiltro || p.categorias?.nome === catFiltro
+    const okCat   = !catFiltro || catNome(p.categorias) === catFiltro
     const b       = busca.toLowerCase()
     const okBusca = !b || p.nome.toLowerCase().includes(b) || (p.titulo_site ?? '').toLowerCase().includes(b)
     return okCat && okBusca
@@ -143,9 +150,9 @@ export default function CatalogoClient({ categorias }: { categorias:{id:number;n
                         ? <Image src={foto} alt={p.nome} fill style={{ objectFit:'cover' }} sizes="(max-width:768px)50vw,25vw" />
                         : <div style={{ width:'100%', height:'100%', display:'flex', alignItems:'center', justifyContent:'center', fontSize:40, opacity:.25 }}>🔧</div>
                       }
-                      {p.categorias?.nome && (
+                      {catNome(p.categorias) && (
                         <div style={{ position:'absolute', bottom:8, left:8, background:'rgba(0,0,0,0.7)', color:'var(--slate)', fontSize:10, padding:'3px 8px', borderRadius:4, fontWeight:600 }}>
-                          {p.categorias.nome}
+                          {catNome(p.categorias)}
                         </div>
                       )}
                     </div>
