@@ -1,5 +1,11 @@
-'use client'
+import type { Metadata } from 'next'
 import Link from 'next/link'
+
+export const metadata: Metadata = {
+  title: 'Quem Somos',
+  description: 'Conheça a Kanoff Soluções: empresa fundada a partir de um sonho, especializada em locação de equipamentos e serviços técnicos com qualidade e confiança.',
+  alternates: { canonical: '/sobre' },
+}
 
 const valores = [
   { icon:'🛡️', titulo:'Compromisso',      desc:'Com a segurança, a qualidade e a satisfação do cliente em cada entrega.' },

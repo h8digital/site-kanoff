@@ -15,7 +15,9 @@ export default function CarrinhoPage() {
   const [form, setForm] = useState({ nome:'', email:'', telefone:'', cidade:'', obra:'', observacoes:'' })
   const [salvando, setSalvando] = useState(false)
   const [erro, setErro] = useState('')
-  const [sucesso, setSucesso] = useState(false)
+  const [sucesso,       setSucesso]       = useState(false)
+  const [tokenCotacao, setTokenCotacao] = useState('')
+  const [numeroCotacao,setNumeroCotacao] = useState('')
 
   const F = (k: keyof typeof form) => ({
     value: form[k],
@@ -40,6 +42,8 @@ export default function CarrinhoPage() {
     })
     const data = await res.json()
     if (!data.ok) { setErro(data.error ?? 'Erro ao enviar. Tente novamente.'); setSalvando(false); return }
+    if (data.token_cliente) setTokenCotacao(data.token_cliente)
+    if (data.numero) setNumeroCotacao(data.numero)
     setSucesso(true)
     limpar()
     setSalvando(false)
@@ -48,15 +52,33 @@ export default function CarrinhoPage() {
   // Sucesso
   if (sucesso) return (
     <div style={{ paddingTop:72, minHeight:'100vh', background:'var(--bg)', display:'flex', alignItems:'center', justifyContent:'center' }}>
-      <div style={{ textAlign:'center', maxWidth:480, padding:'0 24px' }}>
+      <div style={{ textAlign:'center', maxWidth:520, padding:'0 24px' }}>
         <div style={{ fontSize:72, marginBottom:24 }}>✅</div>
         <h1 style={{ fontSize:32, marginBottom:12, color:'var(--primary)' }}>COTAÇÃO ENVIADA!</h1>
-        <p style={{ color:'var(--slate)', fontSize:16, lineHeight:1.7, marginBottom:32 }}>
+        {numeroCotacao && (
+          <div style={{ display:'inline-block', padding:'8px 20px', background:'rgba(255,184,0,0.1)', border:'1px solid rgba(255,184,0,0.3)', borderRadius:99, marginBottom:20 }}>
+            <span style={{ fontFamily:'var(--font-title)', fontSize:13, fontWeight:700, color:'var(--primary)' }}>
+              Nº {numeroCotacao}
+            </span>
+          </div>
+        )}
+        <p style={{ color:'var(--slate)', fontSize:16, lineHeight:1.7, marginBottom:24 }}>
           Recebemos seu pedido. Nossa equipe entrará em contato em até <strong style={{ color:'rgba(255,255,255,0.8)' }}>2 horas úteis</strong> para confirmar disponibilidade e valores.
         </p>
+        {tokenCotacao && (
+          <div style={{ background:'rgba(255,255,255,0.04)', border:'1px solid rgba(255,255,255,0.1)', borderRadius:'var(--r-lg)', padding:'16px 20px', marginBottom:24 }}>
+            <p style={{ fontSize:13, color:'var(--slate)', marginBottom:10 }}>
+              Acompanhe sua cotação pelo link abaixo:
+            </p>
+            <Link href={`/minha-cotacao/${tokenCotacao}`} className="btn-primary"
+              style={{ display:'inline-flex', justifyContent:'center' }}>
+              📋 Ver Minha Cotação
+            </Link>
+          </div>
+        )}
         <div style={{ display:'flex', gap:12, justifyContent:'center', flexWrap:'wrap' }}>
-          <Link href="/equipamentos" className="btn-primary">Ver mais equipamentos</Link>
-          <a href="https://wa.me/5551996556699" target="_blank" rel="noreferrer" className="btn-outline">Falar no WhatsApp</a>
+          <Link href="/equipamentos" className="btn-outline">Ver mais equipamentos</Link>
+          <a href="https://wa.me/5551996556699" target="_blank" rel="noreferrer" className="btn-ghost">Falar no WhatsApp</a>
         </div>
       </div>
     </div>

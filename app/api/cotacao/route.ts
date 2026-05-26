@@ -55,18 +55,23 @@ export async function POST(req: NextRequest) {
       cliente.observacoes ? `Obs: ${cliente.observacoes}` : '',
     ].filter(Boolean).join(' ')
 
+    // Gerar token único para o cliente consultar a cotação
+    const token_cliente = [...Array(32)].map(() => Math.floor(Math.random()*16).toString(16)).join('')
+
     const { data: cotacao, error: cotErr } = await sb.from('cotacoes').insert({
-      cliente_id:   clienteId,
-      status:       'aguardando',
-      origem:       'site',
-      data_emissao: hoje,
+      cliente_id:    clienteId,
+      status:        'aguardando',
+      origem:        'site',
+      periodo_nome:  periodo?.nome ?? null,
+      data_emissao:  hoje,
       data_validade: validade,
-      subtotal:     total,
-      desconto:     0,
-      acrescimo:    0,
-      total:        total,
-      observacoes:  obs,
-    }).select('id,numero').maybeSingle()
+      subtotal:      total,
+      desconto:      0,
+      acrescimo:     0,
+      total:         total,
+      observacoes:   obs,
+      token_cliente: token_cliente,
+    }).select('id,numero,token_cliente').maybeSingle()
 
     if (cotErr) return NextResponse.json({ ok:false, error:'Erro ao criar cotação: '+cotErr.message })
     if (!cotacao) return NextResponse.json({ ok:false, error:'Cotação não retornou dados.' })
@@ -83,7 +88,7 @@ export async function POST(req: NextRequest) {
       }))
     )
 
-    return NextResponse.json({ ok:true, numero:cotacao.numero, cotacao_id:cotacao.id })
+    return NextResponse.json({ ok:true, numero:cotacao.numero, cotacao_id:cotacao.id, token_cliente:cotacao.token_cliente })
 
   } catch(e:any) {
     return NextResponse.json({ ok:false, error:e.message })
