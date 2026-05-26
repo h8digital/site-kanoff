@@ -1,4 +1,4 @@
-// build: 2026-05-26 01:22:52 UTC
+// build: 2026-05-26 02:27:50
 'use client'
 import { useState } from 'react'
 import Image from 'next/image'
@@ -13,7 +13,7 @@ export default function CarrinhoPage() {
   const [confirmando, setConfirmando] = useState(false)
 
   // Dados do cliente
-  const [form, setForm] = useState({ nome:'', email:'', telefone:'', cidade:'', obra:'', observacoes:'' })
+  const [form, setForm] = useState({ nome:'', email:'', telefone:'', cidade:'', obra:'', observacoes:'', data_necessidade:'' })
   const [salvando, setSalvando] = useState(false)
   const [erro, setErro] = useState('')
   const [sucesso,       setSucesso]       = useState(false)
@@ -26,19 +26,45 @@ export default function CarrinhoPage() {
       setForm(f => ({ ...f, [k]: e.target.value })),
   })
 
+  // Máscara de telefone: (99) 9 9999-9999
+  function maskTel(v: string) {
+    v = v.replace(/\D/g,'').slice(0,11)
+    if (v.length <= 2)  return `(${v}`
+    if (v.length <= 7)  return `(${v.slice(0,2)}) ${v.slice(2)}`
+    if (v.length <= 11) return `(${v.slice(0,2)}) ${v.slice(2,3)} ${v.slice(3,7)}-${v.slice(7)}`
+    return v
+  }
+
+  // Máscara de data: dd/mm/aaaa
+  function maskData(v: string) {
+    v = v.replace(/\D/g,'').slice(0,8)
+    if (v.length <= 2)  return v
+    if (v.length <= 4)  return `${v.slice(0,2)}/${v.slice(2)}`
+    return `${v.slice(0,2)}/${v.slice(2,4)}/${v.slice(4)}`
+  }
+
+  // Converter dd/mm/aaaa → aaaa-mm-dd para o banco
+  function dataParaBanco(v: string): string|null {
+    const partes = v.split('/')
+    if (partes.length !== 3 || partes[2].length !== 4) return null
+    return `${partes[2]}-${partes[1]}-${partes[0]}`
+  }
+
   async function finalizar() {
     if (!form.nome.trim()) { setErro('Informe seu nome.'); return }
     if (!form.telefone.trim()) { setErro('Informe seu telefone.'); return }
+    if (!form.data_necessidade.trim()) { setErro('Informe para quando precisa dos equipamentos.'); return }
     setSalvando(true); setErro('')
 
     const res = await fetch('/api/cotacao', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        cliente:  form,
-        periodo:  periodo,
-        itens:    itens.map(i => ({ produto_id:i.produto_id, quantidade:i.quantidade, preco_unitario:i.preco_unitario, nome:i.nome })),
-        total:    total,
+        cliente:          form,
+        periodo:          periodo,
+        itens:            itens.map(i => ({ produto_id:i.produto_id, quantidade:i.quantidade, preco_unitario:i.preco_unitario, nome:i.nome })),
+        total:            total,
+        data_necessidade: dataParaBanco(form.data_necessidade),
       }),
     })
     const data = await res.json()
@@ -164,20 +190,54 @@ export default function CarrinhoPage() {
                 <h3 style={{ fontFamily:'var(--font-title)', fontSize:13, fontWeight:700, textTransform:'uppercase', letterSpacing:'0.15em', color:'var(--primary)', marginBottom:20 }}>Seus Dados</h3>
                 {erro && <div style={{ background:'rgba(248,113,113,0.1)', border:'1px solid rgba(248,113,113,0.3)', borderRadius:'var(--r-sm)', padding:'10px 14px', fontSize:13, color:'#fca5a5', marginBottom:16 }}>⚠ {erro}</div>}
                 <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:16 }}>
-                  {[
-                    { k:'nome',     l:'Nome completo *',      placeholder:'Seu nome' },
-                    { k:'telefone', l:'Telefone / WhatsApp *', placeholder:'(51) 9 9999-9999' },
-                    { k:'email',    l:'E-mail',               placeholder:'seu@email.com', type:'email' },
-                    { k:'cidade',   l:'Cidade',               placeholder:'Sapucaia do Sul' },
-                  ].map(f => (
-                    <div key={f.k}>
-                      <label className="label">{f.l}</label>
-                      <input {...F(f.k as any)} className="input" placeholder={f.placeholder} type={(f as any).type??'text'} />
+                  {/* Nome */}
+                  <div>
+                    <label className="label">Nome completo *</label>
+                    <input value={form.nome} onChange={e=>setForm(f=>({...f,nome:e.target.value}))}
+                      className="input" placeholder="Seu nome" />
+                  </div>
+                  {/* Telefone com máscara */}
+                  <div>
+                    <label className="label">Telefone / WhatsApp *</label>
+                    <input value={form.telefone}
+                      onChange={e=>setForm(f=>({...f,telefone:maskTel(e.target.value)}))}
+                      className="input" placeholder="(51) 9 9999-9999"
+                      inputMode="numeric" maxLength={16} />
+                  </div>
+                  {/* E-mail */}
+                  <div>
+                    <label className="label">E-mail</label>
+                    <input value={form.email} onChange={e=>setForm(f=>({...f,email:e.target.value}))}
+                      className="input" placeholder="seu@email.com" type="email" />
+                  </div>
+                  {/* Cidade */}
+                  <div>
+                    <label className="label">Cidade</label>
+                    <input value={form.cidade} onChange={e=>setForm(f=>({...f,cidade:e.target.value}))}
+                      className="input" placeholder="Sapucaia do Sul" />
+                  </div>
+                  {/* Para quando precisa — destaque visual */}
+                  <div style={{ gridColumn:'1/-1',
+                    background:'rgba(255,184,0,0.08)', border:'1px solid rgba(255,184,0,0.25)',
+                    borderRadius:'var(--r-md)', padding:'14px 16px' }}>
+                    <label className="label" style={{ color:'var(--primary)' }}>
+                      📅 Para quando precisa dos equipamentos? *
+                    </label>
+                    <input value={form.data_necessidade}
+                      onChange={e=>setForm(f=>({...f,data_necessidade:maskData(e.target.value)}))}
+                      className="input" placeholder="dd/mm/aaaa"
+                      inputMode="numeric" maxLength={10}
+                      style={{ marginTop:6, borderColor:'rgba(255,184,0,0.4)',
+                        background:'rgba(255,184,0,0.05)' }} />
+                    <div style={{ fontSize:11, color:'rgba(255,184,0,0.7)', marginTop:6 }}>
+                      Informe a data de início da locação para que possamos confirmar disponibilidade.
                     </div>
-                  ))}
+                  </div>
+                  {/* Obra */}
                   <div style={{ gridColumn:'1/-1' }}>
                     <label className="label">Nome da obra / projeto</label>
-                    <input {...F('obra')} className="input" placeholder="Ex: Residência Silva, Obra Rua das Flores..." />
+                    <input value={form.obra} onChange={e=>setForm(f=>({...f,obra:e.target.value}))}
+                      className="input" placeholder="Ex: Residência Silva, Obra Rua das Flores..." />
                   </div>
                   <div style={{ gridColumn:'1/-1' }}>
                     <label className="label">Observações</label>

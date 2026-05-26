@@ -1,4 +1,4 @@
-// build: 2026-05-26 01:22:52 UTC
+// build: 2026-05-26 02:27:50
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
 export const runtime = 'nodejs'
@@ -12,7 +12,7 @@ const sb = createClient(
 
 export async function POST(req: NextRequest) {
   try {
-    const { cliente, periodo, itens, total } = await req.json()
+    const { cliente, periodo, itens, total, data_necessidade } = await req.json()
 
     if (!cliente?.nome?.trim())   return NextResponse.json({ ok:false, error:'Nome obrigatório.' })
     if (!cliente?.telefone?.trim()) return NextResponse.json({ ok:false, error:'Telefone obrigatório.' })
@@ -49,8 +49,16 @@ export async function POST(req: NextRequest) {
     if (!clienteId) return NextResponse.json({ ok:false, error:'Erro ao identificar cliente.' })
 
     // ── Criar cotação ─────────────────────────────────────────────────────────
+    // Formatar data_necessidade para exibição
+    let dataNecess = ''
+    if (data_necessidade) {
+      const [y,m,d] = data_necessidade.split('-')
+      dataNecess = `${d}/${m}/${y}`
+    }
+
     const obs = [
-      `Cotação via site.`,
+      'Cotação via site.',
+      dataNecess ? `📅 Precisa para: ${dataNecess}.` : '',
       periodo ? `Período: ${periodo.nome} (${periodo.dias} dias).` : '',
       cliente.obra ? `Obra/Projeto: ${cliente.obra}.` : '',
       cliente.observacoes ? `Obs: ${cliente.observacoes}` : '',
@@ -71,7 +79,8 @@ export async function POST(req: NextRequest) {
       acrescimo:     0,
       total:         total,
       observacoes:   obs,
-      token_cliente: token_cliente,
+      token_cliente:    token_cliente,
+      data_necessidade: data_necessidade ?? null,
     }).select('id,numero,token_cliente').maybeSingle()
 
     if (cotErr) return NextResponse.json({ ok:false, error:'Erro ao criar cotação: '+cotErr.message })

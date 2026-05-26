@@ -1,4 +1,4 @@
-// build: 2026-05-26 01:22:52 UTC
+// build: 2026-05-26 02:27:50
 export default function ComoFunciona() {
   const passos = [
     { n:'01', icon:'🎯', titulo:'Escolha o Período', desc:'Selecione o período de locação — diário, semanal, quinzenal ou mensal. Todos os itens do pedido seguem o mesmo período.' },

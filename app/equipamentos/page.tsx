@@ -1,4 +1,4 @@
-// build: 2026-05-26 01:22:52 UTC
+// build: 2026-05-26 02:27:50
 import type { Metadata } from 'next'
 import { Suspense } from 'react'
 import CatalogoClient from './CatalogoClient'
