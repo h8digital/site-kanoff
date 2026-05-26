@@ -11,13 +11,19 @@ type Produto = {
   id:number; nome:string; slug:string; titulo_site:string|null
   preco_locacao_diario:number; preco_fds:number; preco_locacao_semanal:number
   preco_quinzenal:number; preco_locacao_mensal:number
-  categorias:{nome:string}|null
+  categorias:any
   produto_fotos:{url:string;principal:boolean}[]
 }
 
 const CAMPO: Record<string, string> = {
   'Diário':'preco_locacao_diario','Final de Semana':'preco_fds',
   'Semanal':'preco_locacao_semanal','Quinzenal':'preco_quinzenal','Mensal':'preco_locacao_mensal',
+}
+
+function catNome(cat: any): string {
+  if (!cat) return ''
+  if (Array.isArray(cat)) return cat[0]?.nome ?? ''
+  return cat?.nome ?? ''
 }
 
 export default function CatalogoClient({ categorias }: { categorias:{id:number;nome:string}[] }) {
@@ -38,14 +44,14 @@ export default function CatalogoClient({ categorias }: { categorias:{id:number;n
       .eq('ativo', 1)
       .eq('publicado_site', true)
       .order('ordem_site').order('nome')
-    setProdutos(data as Produto[] ?? [])
+    setProdutos((data ?? []) as unknown as Produto[])
     setLoading(false)
   }, [])
 
   useEffect(() => { load() }, [load])
 
   const filtrados = produtos.filter(p => {
-    const okCat   = !catFiltro || p.categorias?.nome === catFiltro
+    const okCat   = !catFiltro || catNome(p.categorias) === catFiltro
     const b       = busca.toLowerCase()
     const okBusca = !b || p.nome.toLowerCase().includes(b) || (p.titulo_site ?? '').toLowerCase().includes(b)
     return okCat && okBusca
@@ -144,9 +150,9 @@ export default function CatalogoClient({ categorias }: { categorias:{id:number;n
                         ? <Image src={foto} alt={p.nome} fill style={{ objectFit:'cover' }} sizes="(max-width:768px)50vw,25vw" />
                         : <div style={{ width:'100%', height:'100%', display:'flex', alignItems:'center', justifyContent:'center', fontSize:40, opacity:.25 }}>🔧</div>
                       }
-                      {p.categorias?.nome && (
+                      {catNome(p.categorias) && (
                         <div style={{ position:'absolute', bottom:8, left:8, background:'rgba(0,0,0,0.7)', color:'var(--slate)', fontSize:10, padding:'3px 8px', borderRadius:4, fontWeight:600 }}>
-                          {p.categorias.nome}
+                          {catNome(p.categorias)}
                         </div>
                       )}
                     </div>
