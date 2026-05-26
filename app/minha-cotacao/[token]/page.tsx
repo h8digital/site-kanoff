@@ -1,3 +1,4 @@
+// build: 2026-05-26 01:22:52 UTC
 'use client'
 import { useEffect, useState } from 'react'
 import { useParams } from 'next/navigation'

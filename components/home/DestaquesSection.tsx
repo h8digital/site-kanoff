@@ -1,3 +1,4 @@
+// build: 2026-05-26 01:22:52 UTC
 import { supabase, fmt, PERIODOS } from '@/lib/supabase'
 import Image from 'next/image'
 import Link from 'next/link'

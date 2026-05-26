@@ -1,3 +1,4 @@
+// build: 2026-05-26 01:22:52 UTC
 import type { Metadata } from 'next'
 import Script from 'next/script'
 import './globals.css'
