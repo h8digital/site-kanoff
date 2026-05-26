@@ -10,7 +10,7 @@ type Produto = {
   id:number; nome:string; slug:string; titulo_site:string|null
   preco_locacao_diario:number; preco_fds:number; preco_locacao_semanal:number
   preco_quinzenal:number; preco_locacao_mensal:number
-  categorias:{nome:string}|null
+  categorias:{nome:string}[]|{nome:string}|null
   produto_fotos:{url:string;principal:boolean}[]
 }
 
@@ -37,7 +37,7 @@ export default function CatalogoClient({ categorias }: { categorias:{id:number;n
       .eq('ativo', 1)
       .eq('publicado_site', true)
       .order('ordem_site').order('nome')
-    setProdutos(data as Produto[] ?? [])
+    setProdutos((data ?? []) as unknown as Produto[])
     setLoading(false)
   }, [])
 
