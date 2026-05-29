@@ -31,12 +31,22 @@ export async function generateMetadata({ params }: { params: Promise<{ slug:stri
   const { slug } = await params
   const p = await getProduto(slug)
   if (!p) return { title:'Equipamento não encontrado' }
+  const nomePublico = p.titulo_site ?? p.nome
+  const seoTitle    = p.seo_title || `${nomePublico} — Locação em Sapucaia do Sul | Kanoff Soluções`
+  const seoDesc     = p.seo_description || p.descricao_site ||
+    `Alugue ${nomePublico} na Kanoff Soluções. Cotação online rápida, entrega e retirada em Sapucaia do Sul e região metropolitana de Porto Alegre.`
   return {
-    title: p.titulo_site ?? p.nome,
-    description: p.descricao_site ?? `Alugue ${p.nome} na Kanoff Soluções. Cotação online rápida.`,
+    title:       seoTitle,
+    description: seoDesc,
     openGraph: {
-      title: p.titulo_site ?? p.nome,
+      title:       seoTitle,
+      description: seoDesc,
       images: (p.produto_fotos ?? []).slice(0,1).map((f: any) => ({ url: f.url })),
+    },
+    twitter: {
+      card:        'summary_large_image',
+      title:       seoTitle,
+      description: seoDesc,
     },
     alternates: { canonical: `/equipamentos/${p.slug ?? p.id}` },
   }
