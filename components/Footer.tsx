@@ -105,6 +105,7 @@ export default function Footer() {
               { href:'/sobre',        l:'Quem Somos' },
               { href:'/contato',      l:'Contato' },
               { href:'/carrinho',     l:'Minha Cotação' },
+              { href:'/contrato',    l:'Contrato de Locação' },
             ].map(i => (
               <Link key={i.href} href={i.href} style={{ display:'block', fontSize:14, color:'var(--slate)', marginBottom:10, transition:'color 0.2s' }}
                 onMouseEnter={e=>(e.currentTarget as HTMLElement).style.color='var(--primary)'}

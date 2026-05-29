@@ -48,7 +48,7 @@ export default function ProdutoClient({ produto }: { produto: any }) {
   return (
     <div style={{ paddingTop:72, background:'var(--bg)', minHeight:'100vh' }}>
       {/* Breadcrumb */}
-      <div style={{ background:'#12103A', padding:'12px 0', borderBottom:'1px solid rgba(255,255,255,0.06)' }}>
+      <div style={{ background:'#ffffff', padding:'12px 0', borderBottom:'1px solid rgba(255,255,255,0.06)' }}>
         <div className="container">
           <div style={{ display:'flex', gap:8, alignItems:'center', fontSize:13, color:'var(--slate)' }}>
             <Link href="/" style={{ color:'var(--slate)', transition:'color .2s' }}
@@ -72,7 +72,7 @@ export default function ProdutoClient({ produto }: { produto: any }) {
             {/* Foto principal */}
             <div style={{ position:'relative', borderRadius:'var(--r-lg)', overflow:'hidden', background:'var(--bg-card)', border:'1px solid rgba(255,255,255,0.08)', aspectRatio:'4/3', marginBottom:12 }}>
               {fotoAtual
-                ? <Image src={fotoAtual} alt={produto.nome} fill style={{ objectFit:'contain', background:'#0d0d1a' }} sizes="50vw" priority />
+                ? <Image src={fotoAtual} alt={produto.nome} fill style={{ objectFit:'contain', padding:'12px', background:'#ffffff' }} sizes="50vw" priority />
                 : <div style={{ width:'100%', height:'100%', display:'flex', alignItems:'center', justifyContent:'center', fontSize:80, opacity:.2 }}>🔧</div>
               }
             </div>

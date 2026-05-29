@@ -10,6 +10,7 @@ const NAV = [
   { href: '/equipamentos',  label: 'Equipamentos' },
   { href: '/sobre',         label: 'Quem Somos' },
   { href: '/contato',       label: 'Contato' },
+  { href: '/contrato',      label: 'Contrato' },
 ]
 
 export default function Header() {

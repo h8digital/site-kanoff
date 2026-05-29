@@ -8,7 +8,7 @@ async function getProduto(slug: string) {
   // Tenta pelo slug primeiro, depois pelo ID
   const { data: bySlug } = await supabase
     .from('produtos')
-    .select('id,nome,slug,titulo_site,descricao_site,descricao,preco_locacao_diario,preco_fds,preco_locacao_semanal,preco_quinzenal,preco_locacao_mensal,categorias(nome),produto_fotos(url,principal),produto_acessorios(nome,quantidade,ativo)')
+    .select('id,nome,slug,titulo_site,descricao_site,seo_title,seo_description,descricao,preco_locacao_diario,preco_fds,preco_locacao_semanal,preco_quinzenal,preco_locacao_mensal,categorias(nome),produto_fotos(url,principal),produto_acessorios(nome,quantidade,ativo)')
     .eq('publicado_site', true).eq('ativo', 1)
     .eq('slug', slug).maybeSingle()
 
@@ -19,7 +19,7 @@ async function getProduto(slug: string) {
   if (!isNaN(numId)) {
     const { data: byId } = await supabase
       .from('produtos')
-      .select('id,nome,slug,titulo_site,descricao_site,descricao,preco_locacao_diario,preco_fds,preco_locacao_semanal,preco_quinzenal,preco_locacao_mensal,categorias(nome),produto_fotos(url,principal),produto_acessorios(nome,quantidade,ativo)')
+      .select('id,nome,slug,titulo_site,descricao_site,seo_title,seo_description,descricao,preco_locacao_diario,preco_fds,preco_locacao_semanal,preco_quinzenal,preco_locacao_mensal,categorias(nome),produto_fotos(url,principal),produto_acessorios(nome,quantidade,ativo)')
       .eq('publicado_site', true).eq('ativo', 1)
       .eq('id', numId).maybeSingle()
     if (byId) return byId
