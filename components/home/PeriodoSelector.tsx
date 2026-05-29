@@ -1,4 +1,4 @@
-// build: 2026-05-26 02:27:50
+// build: 2026-05-29 17:55:15
 'use client'
 import { useCarrinho } from '@/contexts/CarrinhoContext'
 import { PERIODOS } from '@/lib/supabase'

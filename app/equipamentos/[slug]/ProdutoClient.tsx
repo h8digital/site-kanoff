@@ -1,4 +1,4 @@
-// build: 2026-05-26 02:27:50
+// build: 2026-05-29 17:55:15
 'use client'
 import { useState } from 'react'
 import Image from 'next/image'
@@ -72,7 +72,7 @@ export default function ProdutoClient({ produto }: { produto: any }) {
             {/* Foto principal */}
             <div style={{ position:'relative', borderRadius:'var(--r-lg)', overflow:'hidden', background:'var(--bg-card)', border:'1px solid rgba(255,255,255,0.08)', aspectRatio:'4/3', marginBottom:12 }}>
               {fotoAtual
-                ? <Image src={fotoAtual} alt={produto.nome} fill style={{ objectFit:'cover' }} sizes="50vw" priority />
+                ? <Image src={fotoAtual} alt={produto.nome} fill style={{ objectFit:'contain', background:'#0d0d1a' }} sizes="50vw" priority />
                 : <div style={{ width:'100%', height:'100%', display:'flex', alignItems:'center', justifyContent:'center', fontSize:80, opacity:.2 }}>🔧</div>
               }
             </div>

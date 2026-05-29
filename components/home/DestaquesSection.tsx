@@ -1,4 +1,4 @@
-// build: 2026-05-26 02:27:50
+// build: 2026-05-29 17:55:15
 import { supabase, fmt, PERIODOS } from '@/lib/supabase'
 import Image from 'next/image'
 import Link from 'next/link'
@@ -39,7 +39,7 @@ export default async function DestaquesSection() {
                 <div className="produto-card">
                   <div className="produto-card-img">
                     {foto
-                      ? <Image src={foto} alt={p.nome} fill style={{ objectFit:'cover' }} sizes="(max-width:768px)100vw,33vw" />
+                      ? <Image src={foto} alt={p.nome} fill style={{ objectFit:'contain', padding:'8px', background:'#12103A' }} sizes="(max-width:768px)100vw,33vw" />
                       : <div style={{ width:'100%', height:'100%', display:'flex', alignItems:'center', justifyContent:'center', fontSize:48, opacity:.3 }}>🔧</div>
                     }
                     <div className="badge badge-primary" style={{ position:'absolute', top:12, left:12 }}>Destaque</div>

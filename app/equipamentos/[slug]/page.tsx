@@ -1,4 +1,4 @@
-// build: 2026-05-26 02:27:50
+// build: 2026-05-29 17:55:15
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { supabase, fmt, PERIODOS } from '@/lib/supabase'

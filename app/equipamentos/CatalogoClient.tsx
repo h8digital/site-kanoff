@@ -1,4 +1,4 @@
-// build: 2026-05-26 02:27:50
+// build: 2026-05-29 17:55:15
 'use client'
 import { useEffect, useState, useCallback } from 'react'
 import { useSearchParams } from 'next/navigation'
@@ -147,7 +147,7 @@ export default function CatalogoClient({ categorias }: { categorias:{id:number;n
                   <Link href={`/equipamentos/${p.slug??p.id}`} style={{ textDecoration:'none', display:'block' }}>
                     <div className="produto-card-img">
                       {foto
-                        ? <Image src={foto} alt={p.nome} fill style={{ objectFit:'cover' }} sizes="(max-width:768px)50vw,25vw" />
+                        ? <Image src={foto} alt={p.nome} fill style={{ objectFit:'contain', padding:'8px' }} sizes="(max-width:768px)50vw,25vw" />
                         : <div style={{ width:'100%', height:'100%', display:'flex', alignItems:'center', justifyContent:'center', fontSize:40, opacity:.25 }}>🔧</div>
                       }
                       {catNome(p.categorias) && (
