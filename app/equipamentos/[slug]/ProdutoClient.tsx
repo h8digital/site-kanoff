@@ -1,6 +1,6 @@
 // build: 2026-05-29 17:55:15
 'use client'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { fmt, PERIODOS } from '@/lib/supabase'
@@ -13,7 +13,16 @@ const CAMPO: Record<string, string> = {
 
 export default function ProdutoClient({ produto }: { produto: any }) {
   const { periodo, setPeriodo, adicionar, itens, alterar } = useCarrinho()
-  const [fotoIdx, setFotoIdx] = useState(0)
+  const [fotoIdx,   setFotoIdx]   = useState(0)
+  const [isMobile,  setIsMobile]  = useState(false)
+
+  // Detectar mobile
+  useEffect(() => {
+    function check() { setIsMobile(window.innerWidth < 768) }
+    check()
+    window.addEventListener('resize', check)
+    return () => window.removeEventListener('resize', check)
+  }, [])
   const [adicionado, setAdicionado] = useState(false)
 
   const fotos      = produto.produto_fotos ?? []
@@ -65,12 +74,17 @@ export default function ProdutoClient({ produto }: { produto: any }) {
       </div>
 
       <div className="container" style={{ padding:'40px 24px 80px' }}>
-        <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:48, alignItems:'start' }}>
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr',
+          gap: isMobile ? 24 : 48,
+          alignItems: 'start',
+        }}>
 
           {/* ── Galeria ────────────────────────────────────────────── */}
           <div>
             {/* Foto principal */}
-            <div className="produto-foto-wrap" style={{ position:'relative', borderRadius:'var(--r-lg)', overflow:'hidden', background:'var(--bg-card)', border:'1px solid rgba(255,255,255,0.08)', aspectRatio:'4/3', marginBottom:12 }}>
+            <div className="produto-foto-wrap" style={{ position:'relative', borderRadius:'var(--r-lg)', overflow:'hidden', background:'var(--bg-card)', border:'1px solid rgba(255,255,255,0.08)', aspectRatio: isMobile ? '1/1' : '4/3', marginBottom:12, minHeight: isMobile ? 300 : 'auto' }}>
               {fotoAtual
                 ? <Image src={fotoAtual} alt={produto.nome} fill style={{ objectFit:'contain', padding:'12px', background:'#ffffff' }} sizes="50vw" priority />
                 : <div style={{ width:'100%', height:'100%', display:'flex', alignItems:'center', justifyContent:'center', fontSize:80, opacity:.2 }}>🔧</div>
@@ -207,22 +221,18 @@ export default function ProdutoClient({ produto }: { produto: any }) {
 
       <style>{`
         @media(max-width:768px){
-          /* Foto e info em coluna única */
-          .p-grid { display:flex!important; flex-direction:column!important; gap:24px!important; }
-          /* Foto ocupa 100% da largura */
-          .p-foto { width:100%!important; }
-          /* Aspect ratio maior no mobile para foto maior */
-          .p-foto-main { aspect-ratio:4/3!important; min-height:260px; }
           /* Thumbnails menores */
           .p-thumbs button { width:52px!important; height:40px!important; }
           /* Botões em coluna */
           .p-btns { flex-direction:column!important; }
-          .p-btns a, .p-btns button { width:100%!important; justify-content:center!important; text-align:center; }
-          /* Período buttons menores */
-          .periodo-btn { padding:8px 12px!important; font-size:10px!important; }
+          .p-btns a, .p-btns button { width:100%!important; justify-content:center!important; }
+          /* Período selector wrap */
+          .periodo-btn { padding:8px 10px!important; font-size:10px!important; }
           /* Tabela de preços scroll */
           .p-precos { overflow-x:auto!important; }
-          .p-precos table { min-width:320px; }
+          .p-precos table { min-width:300px; font-size:13px; }
+          /* Inputs sem zoom iOS */
+          input, select, textarea { font-size:16px!important; }
         }
       `}</style>
     </div>
