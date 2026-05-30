@@ -48,7 +48,7 @@ export default function ProdutoClient({ produto }: { produto: any }) {
   return (
     <div style={{ paddingTop:72, background:'var(--bg)', minHeight:'100vh' }}>
       {/* Breadcrumb */}
-      <div style={{ background:'#ffffff', padding:'12px 0', borderBottom:'1px solid rgba(255,255,255,0.06)' }}>
+      <div style={{ background:'linear-gradient(180deg,#12103A 0%,var(--bg) 100%)', padding:'12px 0', borderBottom:'1px solid rgba(255,255,255,0.06)' }}>
         <div className="container">
           <div style={{ display:'flex', gap:8, alignItems:'center', fontSize:13, color:'var(--slate)' }}>
             <Link href="/" style={{ color:'var(--slate)', transition:'color .2s' }}
@@ -70,7 +70,7 @@ export default function ProdutoClient({ produto }: { produto: any }) {
           {/* ── Galeria ────────────────────────────────────────────── */}
           <div>
             {/* Foto principal */}
-            <div style={{ position:'relative', borderRadius:'var(--r-lg)', overflow:'hidden', background:'var(--bg-card)', border:'1px solid rgba(255,255,255,0.08)', aspectRatio:'4/3', marginBottom:12 }}>
+            <div className="produto-foto-wrap" style={{ position:'relative', borderRadius:'var(--r-lg)', overflow:'hidden', background:'var(--bg-card)', border:'1px solid rgba(255,255,255,0.08)', aspectRatio:'4/3', marginBottom:12 }}>
               {fotoAtual
                 ? <Image src={fotoAtual} alt={produto.nome} fill style={{ objectFit:'contain', padding:'12px', background:'#ffffff' }} sizes="50vw" priority />
                 : <div style={{ width:'100%', height:'100%', display:'flex', alignItems:'center', justifyContent:'center', fontSize:80, opacity:.2 }}>🔧</div>
@@ -78,7 +78,7 @@ export default function ProdutoClient({ produto }: { produto: any }) {
             </div>
             {/* Thumbnails */}
             {fotos.length > 1 && (
-              <div style={{ display:'flex', gap:8, flexWrap:'wrap' }}>
+              <div className="p-thumbs" style={{ display:'flex', gap:8, flexWrap:'wrap' }}>
                 {fotos.map((f: any, i: number) => (
                   <button key={i} onClick={() => setFotoIdx(i)}
                     style={{ width:72, height:54, borderRadius:'var(--r-sm)', overflow:'hidden', border:`2px solid ${i===fotoIdx?'var(--primary)':'rgba(255,255,255,0.1)'}`, cursor:'pointer', padding:0, background:'none', transition:'border-color .2s' }}>
@@ -148,7 +148,7 @@ export default function ProdutoClient({ produto }: { produto: any }) {
             )}
 
             {/* Botões */}
-            <div style={{ display:'flex', flexDirection:'column', gap:12 }}>
+            <div className="p-btns" style={{ display:'flex', flexDirection:'column', gap:12 }}>
               <button onClick={add} className="btn-primary"
                 style={{ justifyContent:'center', padding:'18px 0', fontSize:14,
                   background: adicionado ? '#34d399' : undefined,
@@ -170,7 +170,7 @@ export default function ProdutoClient({ produto }: { produto: any }) {
 
         {/* Tabela completa de preços */}
         {periodosDisponiveis.length > 0 && (
-          <div style={{ marginTop:60 }}>
+          <div className="p-precos" style={{ marginTop:60 }}>
             <h2 style={{ fontSize:20, marginBottom:24 }}>TABELA DE <span className="neon-text">PREÇOS</span></h2>
             <div style={{ background:'var(--bg-card)', border:'1px solid rgba(255,255,255,0.08)', borderRadius:'var(--r-lg)', overflow:'hidden' }}>
               <table style={{ width:'100%', borderCollapse:'collapse' }}>
@@ -205,7 +205,26 @@ export default function ProdutoClient({ produto }: { produto: any }) {
         )}
       </div>
 
-      <style>{`@media(max-width:768px){.container > div > div:first-child{grid-template-columns:1fr!important}}`}</style>
+      <style>{`
+        @media(max-width:768px){
+          /* Foto e info em coluna única */
+          .p-grid { display:flex!important; flex-direction:column!important; gap:24px!important; }
+          /* Foto ocupa 100% da largura */
+          .p-foto { width:100%!important; }
+          /* Aspect ratio maior no mobile para foto maior */
+          .p-foto-main { aspect-ratio:4/3!important; min-height:260px; }
+          /* Thumbnails menores */
+          .p-thumbs button { width:52px!important; height:40px!important; }
+          /* Botões em coluna */
+          .p-btns { flex-direction:column!important; }
+          .p-btns a, .p-btns button { width:100%!important; justify-content:center!important; text-align:center; }
+          /* Período buttons menores */
+          .periodo-btn { padding:8px 12px!important; font-size:10px!important; }
+          /* Tabela de preços scroll */
+          .p-precos { overflow-x:auto!important; }
+          .p-precos table { min-width:320px; }
+        }
+      `}</style>
     </div>
   )
 }

@@ -139,7 +139,7 @@ export default function CarrinhoPage() {
       </div>
 
       <div className="container" style={{ padding:'32px 24px 80px' }}>
-        <div style={{ display:'grid', gridTemplateColumns:'1fr 380px', gap:32, alignItems:'start' }}>
+        <div style={{ display:'grid', gridTemplateColumns:'1fr 380px', gap:32, alignItems:'start', className:'carrinho-grid' }}>
 
           {/* ── Itens ──────────────────────────────────────────────── */}
           <div style={{ display:'flex', flexDirection:'column', gap:24 }}>
@@ -189,7 +189,7 @@ export default function CarrinhoPage() {
               <div style={{ background:'var(--bg-card)', border:'1px solid rgba(255,255,255,0.08)', borderRadius:'var(--r-lg)', padding:'24px' }}>
                 <h3 style={{ fontFamily:'var(--font-title)', fontSize:13, fontWeight:700, textTransform:'uppercase', letterSpacing:'0.15em', color:'var(--primary)', marginBottom:20 }}>Seus Dados</h3>
                 {erro && <div style={{ background:'rgba(248,113,113,0.1)', border:'1px solid rgba(248,113,113,0.3)', borderRadius:'var(--r-sm)', padding:'10px 14px', fontSize:13, color:'#fca5a5', marginBottom:16 }}>⚠ {erro}</div>}
-                <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:16 }}>
+                <div className="c-form-2" className="c-form-2" style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:16 }}>
                   {/* Nome */}
                   <div>
                     <label className="label">Nome completo *</label>
@@ -249,7 +249,7 @@ export default function CarrinhoPage() {
           </div>
 
           {/* ── Resumo ─────────────────────────────────────────────── */}
-          <div style={{ position:'sticky', top:88 }}>
+          <div className="c-resumo" style={{ position:'sticky', top:88 }}>
             <div style={{ background:'var(--bg-card)', border:'1px solid rgba(255,255,255,0.08)', borderRadius:'var(--r-lg)', padding:'24px' }}>
               <h3 style={{ fontFamily:'var(--font-title)', fontSize:13, fontWeight:700, textTransform:'uppercase', letterSpacing:'0.15em', color:'var(--primary)', marginBottom:20 }}>Resumo</h3>
 
@@ -296,6 +296,25 @@ export default function CarrinhoPage() {
           </div>
         </div>
       </div>
+      <style>{`
+        @media(max-width:768px){
+          /* Grid principal em coluna */
+          .c-grid { display:flex!important; flex-direction:column!important; gap:20px!important; }
+          /* Resumo sem sticky */
+          .c-resumo { position:static!important; width:100%!important; }
+          /* Formulário 1 coluna */
+          .c-form-2 { grid-template-columns:1fr!important; }
+          /* Itens do carrinho compactos */
+          .c-item { padding:12px 14px!important; }
+          .c-item-foto { width:52px!important; height:40px!important; }
+          /* Inputs sem zoom iOS */
+          input, textarea, select { font-size:16px!important; }
+          /* Botões */
+          .c-btn { width:100%!important; justify-content:center!important; }
+          /* Período buttons */
+          .periodo-btn { padding:8px 10px!important; font-size:10px!important; }
+        }
+      `}</style>
     </div>
   )
 }

@@ -541,3 +541,69 @@ a { color: inherit; text-decoration: none }
     display: none !important;
   }
 }
+
+/* ── Carrinho e Produto — Mobile específico ──────────────────────────── */
+@media (max-width: 768px) {
+  /* Produto grid */
+  .produto-grid {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 24px !important;
+  }
+
+  /* Carrinho grid */
+  [data-grid="carrinho"] {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 24px !important;
+  }
+
+  /* Sticky → static no mobile */
+  [style*="position:'sticky'"],
+  [style*="position: sticky"] {
+    position: static !important;
+  }
+
+  /* Formulário 2 colunas → 1 coluna */
+  .form-grid-2 {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Inputs maiores para não dar zoom no iOS */
+  input, textarea, select {
+    font-size: 16px !important;
+  }
+
+  /* Botão de checkout full width */
+  .btn-finalizar {
+    width: 100% !important;
+    justify-content: center !important;
+  }
+
+  /* Header do produto */
+  .produto-header-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Thumbnails de foto */
+  .produto-thumbs {
+    gap: 6px !important;
+  }
+
+  /* Tabela de preços scroll horizontal */
+  .produto-precos {
+    overflow-x: auto !important;
+  }
+}
+
+@media (max-width: 480px) {
+  /* Foto do produto ocupa mais espaço */
+  .produto-foto-wrap {
+    aspect-ratio: 1/1 !important;
+  }
+
+  /* Grid de thumbnails 4 → 5 colunas */
+  .produto-thumbs {
+    grid-template-columns: repeat(4, 1fr) !important;
+  }
+}
