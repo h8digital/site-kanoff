@@ -33,7 +33,7 @@ export default function SobrePage() {
       {/* História */}
       <section className="section">
         <div className="container">
-          <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:60, alignItems:'center' }}>
+          <div className="sobre-grid">
             <div>
               <p className="section-label">Desde março de 2026</p>
               <h2 className="section-title" style={{ fontSize:'clamp(24px,3vw,36px)' }}>NOSSA <span className="neon-text">HISTÓRIA</span></h2>

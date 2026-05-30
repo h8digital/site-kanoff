@@ -1,4 +1,4 @@
-// build: 2026-05-29 17:55:15
+// build: 2026-05-30 responsivo
 'use client'
 import { useState } from 'react'
 import Image from 'next/image'
@@ -12,13 +12,12 @@ export default function CarrinhoPage() {
   const router = useRouter()
   const [confirmando, setConfirmando] = useState(false)
 
-  // Dados do cliente
   const [form, setForm] = useState({ nome:'', email:'', telefone:'', cidade:'', obra:'', observacoes:'', data_necessidade:'' })
   const [salvando, setSalvando] = useState(false)
   const [erro, setErro] = useState('')
-  const [sucesso,       setSucesso]       = useState(false)
+  const [sucesso, setSucesso] = useState(false)
   const [tokenCotacao, setTokenCotacao] = useState('')
-  const [numeroCotacao,setNumeroCotacao] = useState('')
+  const [numeroCotacao, setNumeroCotacao] = useState('')
 
   const F = (k: keyof typeof form) => ({
     value: form[k],
@@ -26,7 +25,6 @@ export default function CarrinhoPage() {
       setForm(f => ({ ...f, [k]: e.target.value })),
   })
 
-  // Máscara de telefone: (99) 9 9999-9999
   function maskTel(v: string) {
     v = v.replace(/\D/g,'').slice(0,11)
     if (v.length <= 2)  return `(${v}`
@@ -35,7 +33,6 @@ export default function CarrinhoPage() {
     return v
   }
 
-  // Máscara de data: dd/mm/aaaa
   function maskData(v: string) {
     v = v.replace(/\D/g,'').slice(0,8)
     if (v.length <= 2)  return v
@@ -43,7 +40,6 @@ export default function CarrinhoPage() {
     return `${v.slice(0,2)}/${v.slice(2,4)}/${v.slice(4)}`
   }
 
-  // Converter dd/mm/aaaa → aaaa-mm-dd para o banco
   function dataParaBanco(v: string): string|null {
     const partes = v.split('/')
     if (partes.length !== 3 || partes[2].length !== 4) return null
@@ -139,7 +135,8 @@ export default function CarrinhoPage() {
       </div>
 
       <div className="container" style={{ padding:'32px 24px 80px' }}>
-        <div style={{ display:'grid', gridTemplateColumns:'1fr 380px', gap:32, alignItems:'start', className:'carrinho-grid' }}>
+        {/* Grid principal — colapsa em coluna no mobile via CSS */}
+        <div className="carrinho-grid">
 
           {/* ── Itens ──────────────────────────────────────────────── */}
           <div style={{ display:'flex', flexDirection:'column', gap:24 }}>
@@ -150,9 +147,9 @@ export default function CarrinhoPage() {
                 {itens.length} Equipamento(s)
               </div>
               {itens.map(item => (
-                <div key={item.produto_id} style={{ display:'flex', gap:16, padding:'16px 20px', borderBottom:'1px solid rgba(255,255,255,0.05)', alignItems:'center' }}>
+                <div key={item.produto_id} className="c-item" style={{ display:'flex', gap:16, padding:'16px 20px', borderBottom:'1px solid rgba(255,255,255,0.05)', alignItems:'center' }}>
                   {/* Foto */}
-                  <div style={{ width:72, height:54, borderRadius:'var(--r-sm)', overflow:'hidden', background:'rgba(255,255,255,0.04)', flexShrink:0, position:'relative' }}>
+                  <div className="c-item-foto" style={{ width:72, height:54, borderRadius:'var(--r-sm)', overflow:'hidden', background:'rgba(255,255,255,0.04)', flexShrink:0, position:'relative' }}>
                     {item.foto
                       ? <Image src={item.foto} alt={item.nome} fill style={{ objectFit:'cover' }} sizes="72px" />
                       : <div style={{ display:'flex', alignItems:'center', justifyContent:'center', height:'100%', fontSize:24, opacity:.3 }}>🔧</div>
@@ -189,14 +186,14 @@ export default function CarrinhoPage() {
               <div style={{ background:'var(--bg-card)', border:'1px solid rgba(255,255,255,0.08)', borderRadius:'var(--r-lg)', padding:'24px' }}>
                 <h3 style={{ fontFamily:'var(--font-title)', fontSize:13, fontWeight:700, textTransform:'uppercase', letterSpacing:'0.15em', color:'var(--primary)', marginBottom:20 }}>Seus Dados</h3>
                 {erro && <div style={{ background:'rgba(248,113,113,0.1)', border:'1px solid rgba(248,113,113,0.3)', borderRadius:'var(--r-sm)', padding:'10px 14px', fontSize:13, color:'#fca5a5', marginBottom:16 }}>⚠ {erro}</div>}
-                <div className="c-form-2" className="c-form-2" style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:16 }}>
+                <div className="c-form-grid">
                   {/* Nome */}
                   <div>
                     <label className="label">Nome completo *</label>
                     <input value={form.nome} onChange={e=>setForm(f=>({...f,nome:e.target.value}))}
                       className="input" placeholder="Seu nome" />
                   </div>
-                  {/* Telefone com máscara */}
+                  {/* Telefone */}
                   <div>
                     <label className="label">Telefone / WhatsApp *</label>
                     <input value={form.telefone}
@@ -216,8 +213,8 @@ export default function CarrinhoPage() {
                     <input value={form.cidade} onChange={e=>setForm(f=>({...f,cidade:e.target.value}))}
                       className="input" placeholder="Sapucaia do Sul" />
                   </div>
-                  {/* Para quando precisa — destaque visual */}
-                  <div style={{ gridColumn:'1/-1',
+                  {/* Data */}
+                  <div className="c-form-full" style={{
                     background:'rgba(255,184,0,0.08)', border:'1px solid rgba(255,184,0,0.25)',
                     borderRadius:'var(--r-md)', padding:'14px 16px' }}>
                     <label className="label" style={{ color:'var(--primary)' }}>
@@ -234,12 +231,12 @@ export default function CarrinhoPage() {
                     </div>
                   </div>
                   {/* Obra */}
-                  <div style={{ gridColumn:'1/-1' }}>
+                  <div className="c-form-full">
                     <label className="label">Nome da obra / projeto</label>
                     <input value={form.obra} onChange={e=>setForm(f=>({...f,obra:e.target.value}))}
                       className="input" placeholder="Ex: Residência Silva, Obra Rua das Flores..." />
                   </div>
-                  <div style={{ gridColumn:'1/-1' }}>
+                  <div className="c-form-full">
                     <label className="label">Observações</label>
                     <textarea {...F('observacoes')} className="input" placeholder="Período desejado, endereço de entrega, dúvidas..." rows={3} style={{ resize:'vertical' }} />
                   </div>
@@ -249,7 +246,7 @@ export default function CarrinhoPage() {
           </div>
 
           {/* ── Resumo ─────────────────────────────────────────────── */}
-          <div className="c-resumo" style={{ position:'sticky', top:88 }}>
+          <div className="c-resumo">
             <div style={{ background:'var(--bg-card)', border:'1px solid rgba(255,255,255,0.08)', borderRadius:'var(--r-lg)', padding:'24px' }}>
               <h3 style={{ fontFamily:'var(--font-title)', fontSize:13, fontWeight:700, textTransform:'uppercase', letterSpacing:'0.15em', color:'var(--primary)', marginBottom:20 }}>Resumo</h3>
 
@@ -296,25 +293,6 @@ export default function CarrinhoPage() {
           </div>
         </div>
       </div>
-      <style>{`
-        @media(max-width:768px){
-          /* Grid principal em coluna */
-          .c-grid { display:flex!important; flex-direction:column!important; gap:20px!important; }
-          /* Resumo sem sticky */
-          .c-resumo { position:static!important; width:100%!important; }
-          /* Formulário 1 coluna */
-          .c-form-2 { grid-template-columns:1fr!important; }
-          /* Itens do carrinho compactos */
-          .c-item { padding:12px 14px!important; }
-          .c-item-foto { width:52px!important; height:40px!important; }
-          /* Inputs sem zoom iOS */
-          input, textarea, select { font-size:16px!important; }
-          /* Botões */
-          .c-btn { width:100%!important; justify-content:center!important; }
-          /* Período buttons */
-          .periodo-btn { padding:8px 10px!important; font-size:10px!important; }
-        }
-      `}</style>
     </div>
   )
 }

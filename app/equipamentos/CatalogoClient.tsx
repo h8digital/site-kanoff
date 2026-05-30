@@ -134,7 +134,7 @@ export default function CatalogoClient({ categorias }: { categorias:{id:number;n
             <h3 style={{ color:'rgba(255,255,255,0.5)', fontSize:18, fontFamily:'var(--font-body)', fontWeight:400 }}>Nenhum equipamento encontrado.</h3>
           </div>
         ) : (
-          <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fill,minmax(240px,1fr))', gap:20 }}>
+          <div className="catalogo-grid" style={{ display:'grid', gridTemplateColumns:'repeat(auto-fill,minmax(240px,1fr))', gap:20 }}>
             {filtrados.map(p => {
               const fotos = p.produto_fotos ?? []
               const foto  = fotos.find(f=>f.principal)?.url ?? fotos[0]?.url

@@ -44,7 +44,7 @@ export default function ContatoPage() {
 
       <section style={{ padding:'40px 0 80px' }}>
         <div className="container">
-          <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:48 }}>
+          <div className="contato-grid">
 
             {/* Formulário */}
             <div style={{ background:'var(--bg-card)', border:'1px solid rgba(255,255,255,0.08)', borderRadius:'var(--r-lg)', padding:'32px' }}>
@@ -59,7 +59,7 @@ export default function ContatoPage() {
                   <h2 style={{ fontFamily:'var(--font-title)', fontSize:14, fontWeight:700, textTransform:'uppercase', letterSpacing:'0.15em', color:'var(--primary)', marginBottom:24 }}>Envie uma mensagem</h2>
                   {erro && <div style={{ background:'rgba(248,113,113,0.1)', border:'1px solid rgba(248,113,113,0.3)', borderRadius:'var(--r-sm)', padding:'10px 14px', fontSize:13, color:'#fca5a5', marginBottom:16 }}>⚠ {erro}</div>}
                   <form onSubmit={enviar} style={{ display:'flex', flexDirection:'column', gap:16 }}>
-                    <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:16 }}>
+                    <div className="c-form-grid-sm">
                       <div><label className="label">Nome *</label><input {...F('nome')} className="input" placeholder="Seu nome" /></div>
                       <div><label className="label">Telefone</label><input {...F('telefone')} className="input" placeholder="(51) 9 9999-9999" /></div>
                     </div>
