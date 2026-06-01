@@ -862,3 +862,31 @@ a { color: inherit; text-decoration: none }
     gap: 32px !important;
   }
 }
+
+/* ── Política de Privacidade ── */
+.politica-content h2 {
+  font-family: var(--font-title);
+  font-size: clamp(16px, 2vw, 20px);
+  color: var(--primary);
+  margin: 36px 0 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid rgba(255,184,0,0.15);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+.politica-content h2:first-child { margin-top: 0; }
+.politica-content p {
+  color: var(--slate);
+  line-height: 1.8;
+  margin-bottom: 14px;
+  font-size: 15px;
+}
+.politica-content ul {
+  color: var(--slate);
+  padding-left: 20px;
+  margin-bottom: 14px;
+  line-height: 1.8;
+  font-size: 15px;
+}
+.politica-content ul li { margin-bottom: 6px; }
+.politica-content strong { color: var(--fg); }
