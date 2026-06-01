@@ -10,34 +10,28 @@ const nextConfig: NextConfig = {
   },
 
   async headers() {
+    // Conforme documentação oficial do Google:
+    // https://developers.google.com/tag-platform/security/guides/csp
     const csp = [
-      // script-src cobre a maioria dos navegadores
-      "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://*.googletagmanager.com",
+      // GTM snippet inline + scripts externos do GTM e GA4
+      // 'unsafe-inline' necessário para Next.js styled-jsx e script inline do GTM
+      "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://googletagmanager.com https://tagmanager.google.com https://*.googletagmanager.com",
 
-      // script-src-elem sobrescreve script-src em Chrome/Edge modernos — GTM exige isso
-      "script-src-elem 'self' 'unsafe-inline' https://*.googletagmanager.com",
+      // Modo de visualização GTM exige esses domínios de estilo
+      "style-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://googletagmanager.com https://tagmanager.google.com https://fonts.googleapis.com",
 
-      // script-src-attr para handlers inline (onclick etc)
-      "script-src-attr 'unsafe-inline'",
+      // Imagens: GA4 + GTM + modo preview + Supabase + domínio próprio
+      "img-src 'self' data: blob: https://www.google-analytics.com https://*.google-analytics.com https://www.googletagmanager.com https://googletagmanager.com https://*.googletagmanager.com https://ssl.gstatic.com https://www.gstatic.com https://*.supabase.co https://www.kanoffsolucoes.com.br",
 
-      // Estilos
-      "style-src 'self' 'unsafe-inline'",
-      "style-src-elem 'self' 'unsafe-inline'",
-      "style-src-attr 'unsafe-inline'",
+      // Conexões: GA4 + GTM
+      "connect-src 'self' https://www.google-analytics.com https://*.google-analytics.com https://*.analytics.google.com https://www.googletagmanager.com https://*.googletagmanager.com https://*.supabase.co wss://*.supabase.co https://viacep.com.br",
 
-      // Imagens
-      "img-src 'self' data: blob: https://*.google-analytics.com https://*.googletagmanager.com https://*.supabase.co https://www.kanoffsolucoes.com.br",
+      // Fontes: modo preview GTM usa Google Fonts
+      "font-src 'self' data: https://fonts.gstatic.com",
 
-      // Conexões: GA4, GTM, Supabase, ViaCEP
-      "connect-src 'self' https://*.google-analytics.com https://*.analytics.google.com https://*.googletagmanager.com https://www.google-analytics.com https://*.supabase.co wss://*.supabase.co https://viacep.com.br",
+      // Frames: GTM preview + Supabase (PDF do contrato)
+      "frame-src 'self' https://www.googletagmanager.com https://googletagmanager.com https://*.googletagmanager.com https://*.supabase.co",
 
-      // Frames: GTM preview + Supabase (PDF)
-      "frame-src 'self' https://*.googletagmanager.com https://*.supabase.co",
-
-      // Workers: GA4 usa service workers
-      "worker-src 'self' blob:",
-
-      "font-src 'self' data:",
       "object-src 'none'",
       "default-src 'self'",
     ].join('; ')
