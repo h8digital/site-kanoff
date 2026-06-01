@@ -15,13 +15,15 @@ interface Item {
 
 interface Props {
   items: Item[]
-  fmt: { money: (v: number) => string }
 }
+
+const money = (v: number) =>
+  'R$ ' + Number(v ?? 0).toFixed(2).replace('.', ',').replace(/\B(?=(\d{3})+(?!\d))/g, '.')
 
 const VISIBLE_DESKTOP = 4
 const VISIBLE_MOBILE  = 1
 
-export default function DestaquesSlider({ items, fmt }: Props) {
+export default function DestaquesSlider({ items }: Props) {
   const [index, setIndex]       = useState(0)
   const [dragging, setDragging] = useState(false)
   const [startX, setStartX]     = useState(0)
@@ -123,7 +125,7 @@ export default function DestaquesSlider({ items, fmt }: Props) {
                       {item.preco > 0 && (
                         <div>
                           <div style={{ fontSize:11, color:'var(--slate)', marginBottom:2 }}>A partir de</div>
-                          <div className="produto-preco-tag">{fmt.money(item.preco)}<span style={{ fontSize:12, fontWeight:400, color:'var(--slate)' }}>/dia</span></div>
+                          <div className="produto-preco-tag">{money(item.preco)}<span style={{ fontSize:12, fontWeight:400, color:'var(--slate)' }}>/dia</span></div>
                         </div>
                       )}
                       <button

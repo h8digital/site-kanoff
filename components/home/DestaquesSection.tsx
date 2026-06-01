@@ -1,5 +1,5 @@
 // build: 2026-06-01
-import { supabase, fmt } from '@/lib/supabase'
+import { supabase } from '@/lib/supabase'
 import DestaquesSlider from './DestaquesSlider'
 
 export const revalidate = 0
@@ -31,5 +31,5 @@ export default async function DestaquesSection() {
     }
   })
 
-  return <DestaquesSlider items={items} fmt={fmt} />
+  return <DestaquesSlider items={items} />
 }
