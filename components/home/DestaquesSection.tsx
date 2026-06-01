@@ -2,6 +2,8 @@
 import { supabase, fmt } from '@/lib/supabase'
 import DestaquesSlider from './DestaquesSlider'
 
+export const revalidate = 0
+
 async function getDestaques() {
   const { data } = await supabase
     .from('produtos')

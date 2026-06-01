@@ -1,11 +1,16 @@
-// build: 2026-05-29 17:55:15
+// build: 2026-06-01
 import { createClient } from '@supabase/supabase-js'
 
 const url  = process.env.NEXT_PUBLIC_SUPABASE_URL!
 const anon = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
 
-// Cliente público — usa RLS, acessa apenas dados publicados
-export const supabase = createClient(url, anon)
+// Cliente público — sem cache (Next.js 15 usa cache por padrão no fetch)
+export const supabase = createClient(url, anon, {
+  global: {
+    fetch: (input, init) =>
+      fetch(input, { ...init, cache: 'no-store' }),
+  },
+})
 
 // Helpers de formatação
 export const fmt = {

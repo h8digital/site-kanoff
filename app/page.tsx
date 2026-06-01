@@ -1,4 +1,4 @@
-// build: 2026-05-29 17:55:15
+// build: 2026-06-01
 import type { Metadata } from 'next'
 import HeroSection from '@/components/home/HeroSection'
 import PeriodoSelector from '@/components/home/PeriodoSelector'
@@ -6,6 +6,8 @@ import DestaquesSection from '@/components/home/DestaquesSection'
 import CategoriasSection from '@/components/home/CategoriasSection'
 import ComoFunciona from '@/components/home/ComoFunciona'
 import CTASection from '@/components/home/CTASection'
+
+export const revalidate = 0
 
 export const metadata: Metadata = {
   title: 'Kanoff Soluções — Locação de Andaimes e Equipamentos para Construção Civil',
