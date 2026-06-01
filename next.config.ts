@@ -11,22 +11,32 @@ const nextConfig: NextConfig = {
 
   async headers() {
     const csp = [
-      // Scripts: próprio domínio + GTM (inline necessário para Next.js)
+      // script-src cobre a maioria dos navegadores
       "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://*.googletagmanager.com",
 
-      // Estilos: inline necessário para styled-jsx / Next.js
-      "style-src 'self' 'unsafe-inline'",
+      // script-src-elem sobrescreve script-src em Chrome/Edge modernos — GTM exige isso
+      "script-src-elem 'self' 'unsafe-inline' https://*.googletagmanager.com",
 
-      // Imagens: domínio próprio + GA + GTM + Supabase Storage + WordPress (logo/favicon)
+      // script-src-attr para handlers inline (onclick etc)
+      "script-src-attr 'unsafe-inline'",
+
+      // Estilos
+      "style-src 'self' 'unsafe-inline'",
+      "style-src-elem 'self' 'unsafe-inline'",
+      "style-src-attr 'unsafe-inline'",
+
+      // Imagens
       "img-src 'self' data: blob: https://*.google-analytics.com https://*.googletagmanager.com https://*.supabase.co https://www.kanoffsolucoes.com.br",
 
-      // Conexões: API do site + GA + GTM + Supabase REST/Realtime + ViaCEP
-      "connect-src 'self' https://*.google-analytics.com https://*.analytics.google.com https://*.googletagmanager.com https://*.supabase.co wss://*.supabase.co https://viacep.com.br",
+      // Conexões: GA4, GTM, Supabase, ViaCEP
+      "connect-src 'self' https://*.google-analytics.com https://*.analytics.google.com https://*.googletagmanager.com https://www.google-analytics.com https://*.supabase.co wss://*.supabase.co https://viacep.com.br",
 
-      // Frames/iframes: GTM preview + Supabase Storage (PDF do contrato)
+      // Frames: GTM preview + Supabase (PDF)
       "frame-src 'self' https://*.googletagmanager.com https://*.supabase.co",
 
-      // Fontes e objetos
+      // Workers: GA4 usa service workers
+      "worker-src 'self' blob:",
+
       "font-src 'self' data:",
       "object-src 'none'",
       "default-src 'self'",
