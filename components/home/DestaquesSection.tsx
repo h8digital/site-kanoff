@@ -55,7 +55,7 @@ export default async function DestaquesSection() {
                         <div className="produto-preco-tag">{fmt.money(preco)}<span style={{ fontSize:12, fontWeight:400, color:'var(--slate)' }}>/dia</span></div>
                       </div>
                     )}
-                    <div className="btn-primary" style={{ textAlign:'center', padding:'10px 0', fontSize:12, marginTop:'auto' }}>
+                    <div className="btn-primary" style={{ display:'flex', alignItems:'center', justifyContent:'center', padding:'10px 0', fontSize:12, marginTop:'auto' }}>
                       Adicionar ao Carrinho
                     </div>
                   </div>
