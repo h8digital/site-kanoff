@@ -49,6 +49,39 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="pt-BR">
       <head>
+        {/* Schema.org LocalBusiness — SEO local */}
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({
+          '@context': 'https://schema.org',
+          '@type': 'LocalBusiness',
+          name: 'Kanoff Soluções',
+          description: 'Locação de equipamentos para construção civil em Sapucaia do Sul e região metropolitana de Porto Alegre.',
+          url: SITE_URL,
+          telephone: '+55-51-99655-6699',
+          email: 'contato@kanoffsolucoes.com.br',
+          priceRange: '$$',
+          image: `${SITE_URL}/og-image.jpg`,
+          address: {
+            '@type': 'PostalAddress',
+            streetAddress: 'Av. Rubem Berta, 495',
+            addressLocality: 'Sapucaia do Sul',
+            addressRegion: 'RS',
+            postalCode: '93210-000',
+            addressCountry: 'BR',
+          },
+          geo: {
+            '@type': 'GeoCoordinates',
+            latitude: -29.8271,
+            longitude: -51.1452,
+          },
+          openingHoursSpecification: [
+            { '@type': 'OpeningHoursSpecification', dayOfWeek: ['Monday','Tuesday','Wednesday','Thursday','Friday'], opens: '08:00', closes: '18:00' },
+            { '@type': 'OpeningHoursSpecification', dayOfWeek: ['Saturday'], opens: '08:00', closes: '12:00' },
+          ],
+          sameAs: [
+            'https://www.facebook.com/kanoffsolucoes',
+            'https://www.instagram.com/kanoffsolucoes',
+          ],
+        })}} />
         {/* Google Tag Manager */}
         <Script id="gtm-script" strategy="afterInteractive">{`
           (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
