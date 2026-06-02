@@ -67,7 +67,7 @@ export async function POST(req: NextRequest) {
 
     const { data: cotacao, error: cotErr } = await sb.from('cotacoes').insert({
       cliente_id:       clienteId,
-      status:           'aguardando',
+      status:           'em_analise',
       origem:           'site',
       periodo_nome:     periodo?.nome ?? null,
       data_emissao:     hoje,
