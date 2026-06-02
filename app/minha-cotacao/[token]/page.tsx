@@ -1,4 +1,4 @@
-// build: 2026-05-29 17:55:15
+// build: 2026-06-02
 'use client'
 import { useEffect, useState } from 'react'
 import { useParams } from 'next/navigation'
@@ -16,18 +16,23 @@ const STATUS: Record<string, { label: string; cor: string; icon: string }> = {
 
 export default function MinhaCotacaoPage() {
   const { token } = useParams() as { token: string }
-  const [cotacao, setCotacao]  = useState<any>(null)
-  const [loading, setLoading]  = useState(true)
-  const [erro,    setErro]     = useState('')
+  const [cotacao,   setCotacao]   = useState<any>(null)
+  const [loading,   setLoading]   = useState(true)
+  const [erro,      setErro]      = useState('')
+  const [acao,      setAcao]      = useState<'aprovar'|'recusar'|null>(null)
+  const [motivo,    setMotivo]    = useState('')
+  const [enviando,  setEnviando]  = useState(false)
+  const [resultado, setResultado] = useState<'aprovada'|'recusada'|null>(null)
 
   useEffect(() => {
     async function load() {
       setLoading(true)
-      const { data, error } = await supabase
+      // Tenta por token_cliente primeiro, depois token_aprovacao
+      let { data, error } = await supabase
         .from('cotacoes')
         .select(`
           id, numero, status, origem, periodo_nome,
-          data_emissao, data_validade, subtotal, total,
+          data_emissao, data_validade, subtotal, total, token_aprovacao,
           observacoes,
           clientes(nome, celular, email),
           cotacao_itens(
@@ -37,6 +42,25 @@ export default function MinhaCotacaoPage() {
         `)
         .eq('token_cliente', token)
         .maybeSingle()
+
+      if (!data && !error) {
+        // Tenta pelo token_aprovacao (link enviado pelo ERP)
+        const res = await supabase
+          .from('cotacoes')
+          .select(`
+            id, numero, status, origem, periodo_nome,
+            data_emissao, data_validade, subtotal, total, token_aprovacao,
+            observacoes,
+            clientes(nome, celular, email),
+            cotacao_itens(
+              quantidade, preco_unitario, total_item, descricao,
+              produtos(nome, titulo_site, produto_fotos(url, principal))
+            )
+          `)
+          .eq('token_aprovacao', token)
+          .maybeSingle()
+        data = res.data; error = res.error
+      }
 
       if (error || !data) {
         setErro('Cotação não encontrada. Verifique o link recebido.')
@@ -48,27 +72,77 @@ export default function MinhaCotacaoPage() {
     if (token) load()
   }, [token])
 
+  async function responder() {
+    if (!acao || !cotacao) return
+    if (acao === 'recusar' && !motivo.trim()) { alert('Por favor, informe o motivo da recusa.'); return }
+    setEnviando(true)
+    try {
+      const res = await fetch('/api/cotacoes/aprovar', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          token:    cotacao.token_aprovacao,
+          acao,
+          motivo,
+          nome:     (cotacao.clientes as any)?.nome,
+          telefone: (cotacao.clientes as any)?.celular,
+          email:    (cotacao.clientes as any)?.email,
+        }),
+      })
+      const d = await res.json()
+      if (d.error) setErro(d.error)
+      else setResultado(acao === 'aprovar' ? 'aprovada' : 'recusada')
+    } catch { setErro('Erro ao processar. Tente novamente.') }
+    setEnviando(false)
+  }
+
+  // ── Loading ───────────────────────────────────────────────────────────────
   if (loading) return (
     <div style={{ paddingTop: 72, minHeight: '100vh', background: 'var(--bg)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
       <div style={{ fontFamily: 'var(--font-title)', color: 'var(--primary)', letterSpacing: '0.2em' }}>CARREGANDO...</div>
     </div>
   )
 
-  if (erro) return (
+  if (erro && !cotacao) return (
     <div style={{ paddingTop: 72, minHeight: '100vh', background: 'var(--bg)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
       <div style={{ textAlign: 'center', padding: '0 24px' }}>
         <div style={{ fontSize: 64, marginBottom: 20 }}>🔍</div>
         <h2 style={{ fontSize: 24, marginBottom: 12 }}>COTAÇÃO <span style={{ color: '#f87171' }}>NÃO ENCONTRADA</span></h2>
-        <p style={{ color: 'var(--slate)', marginBottom: 28 }}>{erro}</p>
-        <a href="https://wa.me/5551996556699" target="_blank" rel="noreferrer" className="btn-primary">
-          Falar com a Equipe
-        </a>
+        <p style={{ color: 'var(--slate)', marginBottom: 28 }}>Verifique o link recebido ou entre em contato.</p>
+        <a href="https://wa.me/5551996556699" target="_blank" rel="noreferrer" className="btn-primary">Falar com a Equipe</a>
       </div>
     </div>
   )
 
-  const st   = STATUS[cotacao.status] ?? STATUS.aguardando
+  // ── Resultado da aprovação ────────────────────────────────────────────────
+  if (resultado) return (
+    <div style={{ paddingTop: 72, minHeight: '100vh', background: 'var(--bg)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <div style={{ textAlign: 'center', padding: '0 24px', maxWidth: 480 }}>
+        <div style={{ fontSize: 72, marginBottom: 20 }}>{resultado === 'aprovada' ? '🎉' : '😔'}</div>
+        <h2 style={{ fontSize: 28, marginBottom: 12 }}>
+          {resultado === 'aprovada'
+            ? <><span className="neon-text">APROVADA</span> COM SUCESSO</>
+            : <>COTAÇÃO <span style={{ color: '#f87171' }}>RECUSADA</span></>}
+        </h2>
+        <p style={{ color: 'var(--slate)', lineHeight: 1.7, marginBottom: 32 }}>
+          {resultado === 'aprovada'
+            ? 'Ótimo! Nossa equipe entrará em contato para confirmar os detalhes da locação e agendar a entrega.'
+            : 'Entendemos. Se mudar de ideia ou tiver dúvidas, entre em contato com nossa equipe.'}
+        </p>
+        <a href={`https://wa.me/5551996556699?text=Olá! Sobre a cotação ${cotacao?.numero}.`}
+          target="_blank" rel="noreferrer" className="btn-primary">
+          Falar com a Equipe
+        </a>
+        <Link href="/equipamentos" className="btn-ghost" style={{ display:'block', marginTop: 12 }}>
+          Ver Equipamentos
+        </Link>
+      </div>
+    </div>
+  )
+
+  const st    = STATUS[cotacao.status] ?? STATUS.aguardando
   const itens = cotacao.cotacao_itens ?? []
+  const podeResponder = cotacao.status === 'aguardando' && cotacao.token_aprovacao
 
   return (
     <div style={{ paddingTop: 72, minHeight: '100vh', background: 'var(--bg)' }}>
@@ -79,12 +153,10 @@ export default function MinhaCotacaoPage() {
           <h1 style={{ fontSize: 'clamp(24px,4vw,40px)', marginBottom: 12 }}>
             COTAÇÃO <span className="neon-text">{cotacao.numero}</span>
           </h1>
-          {/* Status */}
           <div style={{
             display: 'inline-flex', alignItems: 'center', gap: 8,
             padding: '8px 16px', borderRadius: 99, marginBottom: 24,
-            background: `rgba(${st.cor === '#fbbf24' ? '251,191,36' : st.cor === '#34d399' ? '52,211,153' : st.cor === '#f87171' ? '248,113,113' : '129,140,248'},0.15)`,
-            border: `1px solid ${st.cor}44`,
+            background: `${st.cor}18`, border: `1px solid ${st.cor}44`,
           }}>
             <span style={{ fontSize: 18 }}>{st.icon}</span>
             <span style={{ fontFamily: 'var(--font-title)', fontSize: 12, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', color: st.cor }}>
@@ -95,14 +167,14 @@ export default function MinhaCotacaoPage() {
       </div>
 
       <div className="container" style={{ padding: '32px 24px 80px' }}>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 340px', gap: 32, alignItems: 'start' }}>
+        <div className="cotacao-grid-layout">
 
           {/* Itens */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-            <div style={{ background: 'var(--bg-card)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 'var(--r-lg)', overflow: 'hidden' }}>
+            <div style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 'var(--r-lg)', overflow: 'hidden' }}>
               <div style={{ padding: '16px 20px', borderBottom: '1px solid rgba(255,255,255,0.06)', fontFamily: 'var(--font-title)', fontSize: 12, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.15em', color: 'var(--primary)' }}>
                 {itens.length} Equipamento(s)
-                {cotacao.periodo_nome && <span style={{ marginLeft: 12, fontWeight: 400, color: 'var(--slate)' }}>— Período: {cotacao.periodo_nome}</span>}
+                {cotacao.periodo_nome && <span style={{ marginLeft: 12, fontWeight: 400, color: 'var(--slate)' }}>— {cotacao.periodo_nome}</span>}
               </div>
               {itens.map((item: any, i: number) => {
                 const prod  = item.produtos
@@ -112,8 +184,8 @@ export default function MinhaCotacaoPage() {
                 return (
                   <div key={i} style={{ display: 'flex', gap: 14, padding: '14px 20px', borderBottom: '1px solid rgba(255,255,255,0.05)', alignItems: 'center' }}>
                     {foto && (
-                      <div style={{ width: 60, height: 46, borderRadius: 8, overflow: 'hidden', flexShrink: 0, position: 'relative', background: 'rgba(255,255,255,0.04)' }}>
-                        <img src={foto} alt={nome} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                      <div style={{ width: 60, height: 46, borderRadius: 8, overflow: 'hidden', flexShrink: 0, background: '#fff' }}>
+                        <img src={foto} alt={nome} style={{ width: '100%', height: '100%', objectFit: 'contain', padding: 4 }} />
                       </div>
                     )}
                     <div style={{ flex: 1 }}>
@@ -137,17 +209,72 @@ export default function MinhaCotacaoPage() {
                 <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.6)', lineHeight: 1.6 }}>{cotacao.observacoes}</div>
               </div>
             )}
+
+            {/* ── Área de Aprovação / Recusa ── */}
+            {podeResponder && (
+              <div style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 'var(--r-lg)', padding: 24 }}>
+                <h3 style={{ fontFamily: 'var(--font-title)', fontSize: 13, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.15em', color: 'var(--primary)', marginBottom: 16 }}>
+                  Sua Resposta
+                </h3>
+
+                {!acao ? (
+                  <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
+                    <button onClick={() => setAcao('aprovar')} className="btn-primary" style={{ flex: 1, minWidth: 140, padding: '14px 0', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
+                      ✅ Aprovar Cotação
+                    </button>
+                    <button onClick={() => setAcao('recusar')}
+                      style={{ flex: 1, minWidth: 140, padding: '14px 0', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, borderRadius: 'var(--r-sm)', border: '1px solid rgba(248,113,113,0.4)', background: 'rgba(248,113,113,0.08)', color: '#f87171', cursor: 'pointer', fontFamily: 'var(--font-title)', fontWeight: 700, fontSize: 13, textTransform: 'uppercase', letterSpacing: '1.5px' }}>
+                      ❌ Recusar
+                    </button>
+                  </div>
+                ) : (
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+                    <div style={{ padding: '12px 16px', borderRadius: 'var(--r-md)', border: `1px solid ${acao === 'aprovar' ? 'rgba(52,211,153,0.3)' : 'rgba(248,113,113,0.3)'}`, background: acao === 'aprovar' ? 'rgba(52,211,153,0.08)' : 'rgba(248,113,113,0.08)' }}>
+                      <span style={{ color: acao === 'aprovar' ? '#34d399' : '#f87171', fontWeight: 700, fontSize: 14 }}>
+                        {acao === 'aprovar' ? '✅ Aprovando a cotação' : '❌ Recusando a cotação'}
+                      </span>
+                    </div>
+                    {acao === 'recusar' && (
+                      <div>
+                        <label style={{ display: 'block', fontSize: 12, color: 'var(--slate)', marginBottom: 6, textTransform: 'uppercase', letterSpacing: '0.08em' }}>Motivo da recusa *</label>
+                        <textarea value={motivo} onChange={e => setMotivo(e.target.value)} rows={3}
+                          placeholder="Ex: Valor acima do orçamento, não preciso mais..."
+                          style={{ width: '100%', borderRadius: 'var(--r-sm)', border: '1px solid rgba(255,255,255,0.12)', background: 'rgba(255,255,255,0.06)', color: 'var(--fg)', padding: '10px 14px', fontSize: 14, resize: 'vertical', fontFamily: 'inherit' }} />
+                      </div>
+                    )}
+                    <div style={{ display: 'flex', gap: 10 }}>
+                      <button onClick={responder} disabled={enviando} className="btn-primary"
+                        style={{ flex: 2, padding: '12px 0', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                        {enviando ? 'Enviando...' : 'Confirmar'}
+                      </button>
+                      <button onClick={() => { setAcao(null); setMotivo('') }}
+                        style={{ flex: 1, padding: '12px 0', borderRadius: 'var(--r-sm)', border: '1px solid rgba(255,255,255,0.12)', background: 'transparent', color: 'var(--slate)', cursor: 'pointer', fontSize: 13 }}>
+                        Voltar
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* Status final — não pode mais responder */}
+            {!podeResponder && cotacao.status !== 'aguardando' && (
+              <div style={{ padding: '16px 20px', borderRadius: 'var(--r-md)', border: `1px solid ${st.cor}33`, background: `${st.cor}10`, textAlign: 'center' }}>
+                <span style={{ fontSize: 24, display: 'block', marginBottom: 6 }}>{st.icon}</span>
+                <span style={{ color: st.cor, fontWeight: 700, fontSize: 14 }}>{st.label}</span>
+              </div>
+            )}
           </div>
 
           {/* Resumo lateral */}
           <div style={{ position: 'sticky', top: 88 }}>
-            <div style={{ background: 'var(--bg-card)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 'var(--r-lg)', padding: 24 }}>
+            <div style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 'var(--r-lg)', padding: 24 }}>
               <h3 style={{ fontFamily: 'var(--font-title)', fontSize: 13, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.15em', color: 'var(--primary)', marginBottom: 20 }}>Resumo</h3>
 
               {[
                 { l: 'Número',    v: cotacao.numero },
-                { l: 'Emissão',   v: cotacao.data_emissao ? new Date(cotacao.data_emissao + 'T12:00:00').toLocaleDateString('pt-BR') : '—' },
-                { l: 'Validade',  v: cotacao.data_validade ? new Date(cotacao.data_validade + 'T12:00:00').toLocaleDateString('pt-BR') : '—' },
+                { l: 'Emissão',   v: cotacao.data_emissao ? new Date(cotacao.data_emissao+'T12:00:00').toLocaleDateString('pt-BR') : '—' },
+                { l: 'Validade',  v: cotacao.data_validade ? new Date(cotacao.data_validade+'T12:00:00').toLocaleDateString('pt-BR') : '—' },
                 { l: 'Período',   v: cotacao.periodo_nome ?? '—' },
                 { l: 'Cliente',   v: (cotacao.clientes as any)?.nome ?? '—' },
               ].map(item => (
@@ -168,12 +295,11 @@ export default function MinhaCotacaoPage() {
                 * Valor estimado sujeito a confirmação de disponibilidade.
               </p>
 
-              <a href={`https://wa.me/5551996556699?text=Olá! Tenho uma dúvida sobre a cotação ${cotacao.numero}.`}
+              <a href={`https://wa.me/5551996556699?text=Olá! Tenho dúvidas sobre a cotação ${cotacao.numero}.`}
                 target="_blank" rel="noreferrer" className="btn-primary"
                 style={{ display: 'flex', justifyContent: 'center', width: '100%', padding: '14px 0' }}>
                 Falar com a Equipe
               </a>
-
               <Link href="/equipamentos" className="btn-ghost"
                 style={{ display: 'flex', justifyContent: 'center', marginTop: 10, width: '100%' }}>
                 Nova Cotação
@@ -183,8 +309,10 @@ export default function MinhaCotacaoPage() {
         </div>
       </div>
 
-      {/* Mobile fix */}
-      <style>{`@media(max-width:768px){.container>div[style*="grid-template-columns"]{display:flex!important;flex-direction:column!important}}`}</style>
+      <style>{`
+        .cotacao-grid-layout { display: grid; grid-template-columns: 1fr 340px; gap: 32px; align-items: start; }
+        @media(max-width:768px) { .cotacao-grid-layout { display: flex !important; flex-direction: column !important; } }
+      `}</style>
     </div>
   )
 }
