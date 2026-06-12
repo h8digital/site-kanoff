@@ -60,23 +60,13 @@ export default function NotFound() {
   }
 
   return (
-    <div style={{ paddingTop:88, minHeight:'100vh', background:'var(--bg)' }}>
+    <div style={{ paddingTop:88, minHeight:'100vh', background:'var(--bg)', display:'flex', alignItems:'center' }}>
       <div style={{
         background:'linear-gradient(180deg,#12103A 0%,var(--bg) 100%)',
-        padding:'60px 0 40px',
+        padding:'40px 0',
+        width:'100%',
       }}>
         <div className="container" style={{ textAlign:'center', maxWidth:640, margin:'0 auto' }}>
-
-          {/* Ícone / Logo */}
-          <div style={{ marginBottom:24, opacity:.9 }}>
-            <Image
-              src="https://ojgapdjobnflcawfshir.supabase.co/storage/v1/object/public/logos/logo.png"
-              alt="Kanoff Soluções"
-              width={72}
-              height={72}
-              style={{ objectFit:'contain', borderRadius:'50%', margin:'0 auto' }}
-            />
-          </div>
 
           {/* 404 */}
           <div style={{
