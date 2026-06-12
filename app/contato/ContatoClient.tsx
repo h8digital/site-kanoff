@@ -1,12 +1,29 @@
-// build: 2026-05-29 17:55:15
+// build: 2026-06-12
 'use client'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { supabase } from '@/lib/supabase'
 
 export default function ContatoClient() {
   const [form, setForm]     = useState({ nome:'', email:'', telefone:'', mensagem:'' })
   const [salvando, setSalvando] = useState(false)
   const [sucesso, setSucesso]   = useState(false)
   const [erro, setErro]         = useState('')
+  const [horario, setHorario]   = useState('Seg–Sex: 08h às 18h')
+
+  useEffect(() => {
+    supabase.from('site_config').select('chave,valor')
+      .in('chave', ['horario_funcionamento','horario_seg_sex','horario_sabado','horario_domingo'])
+      .then(({ data }) => {
+        const map: Record<string,string> = {}
+        ;(data ?? []).forEach((r:any) => { map[r.chave] = r.valor ?? '' })
+        if (map.horario_funcionamento) {
+          setHorario(map.horario_funcionamento.replace(/\s*\|\s*/g, '\n'))
+        } else {
+          const partes = [map.horario_seg_sex, map.horario_sabado, map.horario_domingo].filter(Boolean)
+          if (partes.length) setHorario(partes.join('\n'))
+        }
+      })
+  }, [])
 
   const F = (k: keyof typeof form) => ({
     value: form[k],
@@ -78,7 +95,7 @@ export default function ContatoClient() {
                 { icon:'📍', titulo:'Endereço', cont:'Av. Rubem Berta, 495, Centro\nSapucaia do Sul/RS' },
                 { icon:'📞', titulo:'Telefone / WhatsApp', cont:'(51) 99655-6699', href:'https://wa.me/5551996556699' },
                 { icon:'✉️', titulo:'E-mail', cont:'contato@kanoffsolucoes.com.br', href:'mailto:contato@kanoffsolucoes.com.br' },
-                { icon:'🕐', titulo:'Horário', cont:'Seg–Sex: 08h às 18h\nSáb: 08h às 12h' },
+                { icon:'🕐', titulo:'Horário', cont: horario },
               ].map(item => (
                 <div key={item.titulo} style={{ background:'var(--bg-card)', border:'1px solid rgba(255,255,255,0.08)', borderRadius:'var(--r-md)', padding:'20px 24px', display:'flex', gap:16, alignItems:'flex-start' }}>
                   <span style={{ fontSize:28, flexShrink:0 }}>{item.icon}</span>

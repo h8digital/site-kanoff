@@ -1,7 +1,20 @@
-// build: 2026-05-29 17:55:15
+// build: 2026-06-12
 import Link from 'next/link'
+import { supabase } from '@/lib/supabase'
 
-export default function CTASection() {
+export const revalidate = 0
+
+async function getHorario() {
+  const { data } = await supabase.from('site_config').select('chave,valor')
+    .in('chave', ['horario_funcionamento','horario_seg_sex','horario_sabado','horario_domingo'])
+  const map: Record<string,string> = {}
+  ;(data ?? []).forEach((r:any) => { map[r.chave] = r.valor ?? '' })
+  if (map.horario_funcionamento) return map.horario_funcionamento
+  return [map.horario_seg_sex, map.horario_sabado, map.horario_domingo].filter(Boolean).join(' | ')
+}
+
+export default async function CTASection() {
+  const horario = await getHorario()
   return (
     <section style={{
       padding: '80px 0',
@@ -19,7 +32,7 @@ export default function CTASection() {
           SOLICITE SUA <span className="neon-text">COTAÇÃO</span>
         </h2>
         <p style={{ fontSize:16, color:'var(--slate)', maxWidth:480, margin:'0 auto 40px', lineHeight:1.7 }}>
-          Respondemos em até 2 horas úteis. Seg–Sex: 08h às 18h | Sáb: 08h às 12h.
+          Respondemos em até 2 horas úteis. {horario}.
         </p>
         <div style={{ display:'flex', gap:16, justifyContent:'center', flexWrap:'wrap' }}>
           <Link href="/equipamentos" className="btn-primary" style={{ padding:'18px 40px', fontSize:13 }}>

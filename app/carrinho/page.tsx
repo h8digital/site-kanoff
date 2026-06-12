@@ -1,16 +1,32 @@
 // build: 2026-05-30 responsivo
 'use client'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { fmt } from '@/lib/supabase'
+import { fmt, supabase } from '@/lib/supabase'
 import { useCarrinho } from '@/contexts/CarrinhoContext'
 
 export default function CarrinhoPage() {
   const { itens, periodo, total, alterar, remover, limpar } = useCarrinho()
   const router = useRouter()
   const [confirmando, setConfirmando] = useState(false)
+  const [horario, setHorario] = useState('')
+
+  useEffect(() => {
+    supabase.from('site_config').select('chave,valor')
+      .in('chave', ['horario_funcionamento','horario_seg_sex','horario_sabado','horario_domingo'])
+      .then(({ data }) => {
+        const map: Record<string,string> = {}
+        ;(data ?? []).forEach((r:any) => { map[r.chave] = r.valor ?? '' })
+        if (map.horario_funcionamento) {
+          setHorario(map.horario_funcionamento)
+        } else {
+          const partes = [map.horario_seg_sex, map.horario_sabado, map.horario_domingo].filter(Boolean)
+          setHorario(partes.join(' | '))
+        }
+      })
+  }, [])
 
   const [form, setForm] = useState({ nome:'', email:'', telefone:'', cidade:'', obra:'', observacoes:'', data_necessidade:'' })
   const [salvando, setSalvando] = useState(false)
@@ -313,7 +329,7 @@ export default function CarrinhoPage() {
 
               <div style={{ marginTop:20, padding:'12px', background:'rgba(255,184,0,0.06)', border:'1px solid rgba(255,184,0,0.15)', borderRadius:'var(--r-sm)', fontSize:12, color:'rgba(255,255,255,0.5)', lineHeight:1.6 }}>
                 🕐 Respondemos em até <strong style={{ color:'rgba(255,184,0,0.8)' }}>2 horas úteis</strong><br/>
-                Seg–Sex: 08h às 18h | Sáb: 08h às 12h
+                {horario || 'Seg–Sex: 08h às 18h'}
               </div>
             </div>
           </div>
