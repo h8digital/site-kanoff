@@ -67,6 +67,28 @@ export default function CarrinhoPage() {
     if (!data.ok) { setErro(data.error ?? 'Erro ao enviar. Tente novamente.'); setSalvando(false); return }
     if (data.token_cliente) setTokenCotacao(data.token_cliente)
     if (data.numero) setNumeroCotacao(data.numero)
+
+    // Montar mensagem e abrir WhatsApp automaticamente
+    const linhas = [
+      `Olá! Acabei de solicitar uma cotação no site (Nº ${data.numero ?? ''}).`,
+      '',
+      `*Nome:* ${form.nome}`,
+      `*Telefone:* ${form.telefone}`,
+      form.cidade ? `*Cidade:* ${form.cidade}` : null,
+      form.obra ? `*Obra/Projeto:* ${form.obra}` : null,
+      form.data_necessidade ? `*Necessito a partir de:* ${form.data_necessidade}` : null,
+      periodo ? `*Período:* ${periodo.nome}` : null,
+      '',
+      '*Equipamentos:*',
+      ...itens.map(i => `• ${i.quantidade}x ${i.nome} — ${fmt.money(i.preco_unitario*i.quantidade)}`),
+      '',
+      `*Total estimado:* ${fmt.money(total)}`,
+      form.observacoes ? `\n*Obs:* ${form.observacoes}` : null,
+    ].filter(Boolean).join('\n')
+
+    const urlWpp = `https://wa.me/5551996556699?text=${encodeURIComponent(linhas)}`
+    window.open(urlWpp, '_blank')
+
     setSucesso(true)
     limpar()
     setSalvando(false)
@@ -86,7 +108,8 @@ export default function CarrinhoPage() {
           </div>
         )}
         <p style={{ color:'var(--slate)', fontSize:16, lineHeight:1.7, marginBottom:24 }}>
-          Recebemos seu pedido. Nossa equipe entrará em contato em até <strong style={{ color:'rgba(255,255,255,0.8)' }}>2 horas úteis</strong> para confirmar disponibilidade e valores.
+          Recebemos seu pedido e abrimos o WhatsApp com os detalhes preenchidos — basta enviar a mensagem.
+          Nossa equipe responde em até <strong style={{ color:'rgba(255,255,255,0.8)' }}>2 horas úteis</strong>.
         </p>
         {tokenCotacao && (
           <div style={{ background:'rgba(255,255,255,0.04)', border:'1px solid rgba(255,255,255,0.1)', borderRadius:'var(--r-lg)', padding:'16px 20px', marginBottom:24 }}>
@@ -273,8 +296,11 @@ export default function CarrinhoPage() {
                 className="btn-primary"
                 style={{ width:'100%', justifyContent:'center', padding:'16px 0', fontSize:13, marginTop:8,
                   opacity: salvando ? .7 : 1 }}>
-                {salvando ? 'Enviando...' : '📋 Solicitar Cotação'}
+                {salvando ? 'Enviando...' : '📲 Enviar Cotação via WhatsApp'}
               </button>
+              <p style={{ fontSize:11, color:'rgba(255,255,255,0.3)', marginTop:8, textAlign:'center', lineHeight:1.5 }}>
+                Sua cotação será registrada e o WhatsApp abrirá automaticamente com os itens já preenchidos.
+              </p>
 
               <div style={{ marginTop:12, display:'flex', justifyContent:'center' }}>
                 <button onClick={() => { if (confirm('Limpar o carrinho?')) limpar() }}
