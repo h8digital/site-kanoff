@@ -41,7 +41,7 @@ export default function Header() {
         {/* Logo */}
         <Link href="/" style={{ display:'flex', alignItems:'center', flexShrink:0 }}>
           <Image
-            src="https://www.kanoffsolucoes.com.br/wp-content/uploads/2026/05/Logotipo-Alta.png"
+            src="https://ojgapdjobnflcawfshir.supabase.co/storage/v1/object/public/logos/logo.png"
             alt="Kanoff Soluções"
             width={140}
             height={48}
