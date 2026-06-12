@@ -30,7 +30,7 @@ export default function ContatoClient() {
   }
 
   return (
-    <div style={{ paddingTop:72, background:'var(--bg)', minHeight:'100vh' }}>
+    <div style={{ paddingTop:88, background:'var(--bg)', minHeight:'100vh' }}>
       <section style={{ background:'linear-gradient(180deg,#12103A 0%,var(--bg) 100%)', padding:'60px 0 0' }}>
         <div className="container">
           <p className="section-label">Fale conosco</p>

@@ -70,13 +70,13 @@ export default function MinhaCotacaoPage() {
 
   // ── Loading ───────────────────────────────────────────────────────────────
   if (loading) return (
-    <div style={{ paddingTop: 72, minHeight: '100vh', background: 'var(--bg)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+    <div style={{ paddingTop: 88, minHeight: '100vh', background: 'var(--bg)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
       <div style={{ fontFamily: 'var(--font-title)', color: 'var(--primary)', letterSpacing: '0.2em' }}>CARREGANDO...</div>
     </div>
   )
 
   if (erro && !cotacao) return (
-    <div style={{ paddingTop: 72, minHeight: '100vh', background: 'var(--bg)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+    <div style={{ paddingTop: 88, minHeight: '100vh', background: 'var(--bg)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
       <div style={{ textAlign: 'center', padding: '0 24px' }}>
         <div style={{ fontSize: 64, marginBottom: 20 }}>🔍</div>
         <h2 style={{ fontSize: 24, marginBottom: 12 }}>COTAÇÃO <span style={{ color: '#f87171' }}>NÃO ENCONTRADA</span></h2>
@@ -90,7 +90,7 @@ export default function MinhaCotacaoPage() {
   const itens = cotacao.cotacao_itens ?? []
 
   return (
-    <div style={{ paddingTop: 72, minHeight: '100vh', background: 'var(--bg)' }}>
+    <div style={{ paddingTop: 88, minHeight: '100vh', background: 'var(--bg)' }}>
       {/* Header */}
       <div style={{ background: 'linear-gradient(180deg,#12103A 0%,var(--bg) 100%)', padding: '48px 0 0' }}>
         <div className="container">

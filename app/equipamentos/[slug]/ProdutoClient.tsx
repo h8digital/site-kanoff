@@ -55,7 +55,7 @@ export default function ProdutoClient({ produto }: { produto: any }) {
   }
 
   return (
-    <div style={{ paddingTop:72, background:'var(--bg)', minHeight:'100vh' }}>
+    <div style={{ paddingTop:88, background:'var(--bg)', minHeight:'100vh' }}>
       {/* Breadcrumb */}
       <div style={{ background:'linear-gradient(180deg,#12103A 0%,var(--bg) 100%)', padding:'12px 0', borderBottom:'1px solid rgba(255,255,255,0.06)' }}>
         <div className="container">

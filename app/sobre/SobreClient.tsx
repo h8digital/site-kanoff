@@ -14,7 +14,7 @@ const valores = [
 
 export default function SobreClient() {
   return (
-    <div style={{ paddingTop:72, background:'var(--bg)' }}>
+    <div style={{ paddingTop:88, background:'var(--bg)' }}>
 
       {/* Hero */}
       <section style={{ background:'linear-gradient(135deg,#12103A 0%,#0A051E 100%)', padding:'80px 0', borderBottom:'1px solid rgba(255,255,255,0.06)' }}>

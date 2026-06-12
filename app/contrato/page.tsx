@@ -24,7 +24,7 @@ export default async function ContratoPage() {
   const wa = '5551996556699'
 
   return (
-    <div style={{ paddingTop:72, minHeight:'100vh', background:'var(--bg)' }}>
+    <div style={{ paddingTop:88, minHeight:'100vh', background:'var(--bg)' }}>
       {/* Header */}
       <div style={{ background:'linear-gradient(180deg,#12103A 0%,var(--bg) 100%)', padding:'48px 0 32px' }}>
         <div className="container">

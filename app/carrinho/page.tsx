@@ -96,7 +96,7 @@ export default function CarrinhoPage() {
 
   // Sucesso
   if (sucesso) return (
-    <div style={{ paddingTop:72, minHeight:'100vh', background:'var(--bg)', display:'flex', alignItems:'center', justifyContent:'center' }}>
+    <div style={{ paddingTop:88, minHeight:'100vh', background:'var(--bg)', display:'flex', alignItems:'center', justifyContent:'center' }}>
       <div style={{ textAlign:'center', maxWidth:520, padding:'0 24px' }}>
         <div style={{ fontSize:72, marginBottom:24 }}>✅</div>
         <h1 style={{ fontSize:32, marginBottom:12, color:'var(--primary)' }}>COTAÇÃO ENVIADA!</h1>
@@ -132,7 +132,7 @@ export default function CarrinhoPage() {
 
   // Carrinho vazio
   if (itens.length === 0) return (
-    <div style={{ paddingTop:72, minHeight:'100vh', background:'var(--bg)', display:'flex', alignItems:'center', justifyContent:'center' }}>
+    <div style={{ paddingTop:88, minHeight:'100vh', background:'var(--bg)', display:'flex', alignItems:'center', justifyContent:'center' }}>
       <div style={{ textAlign:'center', maxWidth:400, padding:'0 24px' }}>
         <div style={{ fontSize:64, marginBottom:20, opacity:.5 }}>🛒</div>
         <h2 style={{ fontSize:24, marginBottom:12 }}>CARRINHO <span className="neon-text">VAZIO</span></h2>
@@ -143,7 +143,7 @@ export default function CarrinhoPage() {
   )
 
   return (
-    <div style={{ paddingTop:72, minHeight:'100vh', background:'var(--bg)' }}>
+    <div style={{ paddingTop:88, minHeight:'100vh', background:'var(--bg)' }}>
       <div style={{ background:'linear-gradient(180deg,#12103A 0%,var(--bg) 100%)', padding:'40px 0 0' }}>
         <div className="container">
           <h1 style={{ fontSize:'clamp(24px,4vw,40px)', marginBottom:8 }}>

@@ -18,7 +18,7 @@ async function getCategorias() {
 export default async function EquipamentosPage() {
   const categorias = await getCategorias()
   return (
-    <div style={{ paddingTop:72 }}>
+    <div style={{ paddingTop:88 }}>
       <Suspense fallback={<div style={{ minHeight:'100vh', display:'flex', alignItems:'center', justifyContent:'center' }}><span style={{ color:'var(--primary)' }}>Carregando...</span></div>}>
         <CatalogoClient categorias={categorias} />
       </Suspense>

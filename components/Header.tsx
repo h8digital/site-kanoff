@@ -36,15 +36,15 @@ export default function Header() {
       backdropFilter: scrolled ? 'blur(20px)' : 'none',
       borderBottom: scrolled ? '1px solid rgba(255,255,255,0.08)' : 'none',
     }}>
-      <div className="container" style={{ display:'flex', alignItems:'center', justifyContent:'space-between', height:72 }}>
+      <div className="container" style={{ display:'flex', alignItems:'center', justifyContent:'space-between', height:88 }}>
 
         {/* Logo */}
         <Link href="/" style={{ display:'flex', alignItems:'center', flexShrink:0 }}>
           <Image
             src="https://ojgapdjobnflcawfshir.supabase.co/storage/v1/object/public/logos/logo.png"
             alt="Kanoff Soluções"
-            width={140}
-            height={48}
+            width={190}
+            height={66}
             style={{ objectFit:'contain' }}
             priority
           />
