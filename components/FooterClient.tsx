@@ -15,7 +15,7 @@ export default function FooterClient({ config }: Props) {
   const cidade    = `${config['empresa_cidade'] ?? 'Sapucaia do Sul'}/${config['empresa_estado'] ?? 'RS'}`
   const facebook  = config['empresa_facebook'] ?? 'https://www.facebook.com/kanoffsolucoes'
   const instagram = config['empresa_instagram'] ?? 'https://www.instagram.com/kanoffsolucoes'
-  const logo      = config['empresa_logo'] ?? 'https://www.kanoffsolucoes.com.br/wp-content/uploads/2026/05/Logotipo-Alta.png'
+  const logo      = config['empresa_logo'] || 'https://ojgapdjobnflcawfshir.supabase.co/storage/v1/object/public/logos/logo.png'
 
   const horarioSegSex = config['horario_seg_sex'] ?? 'Seg–Sex: 08h às 18h'
   const horarioSab    = config['horario_sabado']  ?? 'Sáb: 08h às 12h'
