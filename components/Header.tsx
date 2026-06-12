@@ -43,9 +43,9 @@ export default function Header() {
           <Image
             src="https://ojgapdjobnflcawfshir.supabase.co/storage/v1/object/public/logos/logo.png"
             alt="Kanoff Soluções"
-            width={190}
-            height={66}
-            style={{ objectFit:'contain' }}
+            width={64}
+            height={64}
+            style={{ objectFit:'contain', borderRadius:'50%' }}
             priority
           />
         </Link>
