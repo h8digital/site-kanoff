@@ -32,7 +32,7 @@ export default function CatalogoClient({ categorias }: { categorias:{id:number;n
 
   const [produtos, setProdutos] = useState<Produto[]>([])
   const [loading,  setLoading]  = useState(true)
-  const [busca,    setBusca]    = useState('')
+  const [busca,    setBusca]    = useState(params.get('busca') ?? '')
   const [catFiltro,setCatFiltro]= useState(params.get('categoria') ?? '')
   const [adicionado, setAdicionado] = useState<number|null>(null)
 
